@@ -1,0 +1,16 @@
+dd75366a3c56d9033ec771a3691fa108 *ChangeLog
+f7d7827445e44717a746b805a713e846 *DESCRIPTION
+68c9c850bc060c3dc5770164905ff8e0 *NAMESPACE
+445fabdb0fd88ca87a0ac6a016b3f4db *R/RcppExports.R
+c9bfe2cae6243d11034a49c703048212 *R/anytime.R
+6b64509695e913454fbc02ae2699d631 *R/init.R
+6c8df849c9796390a4e711550f2c495c *R/utils.R
+46c0acdc28a8a1d16af97e8ee995c1bd *README.md
+31cfd147133fa18bf9267bbe487d1632 *build/partial.rdb
+f4165b45f04164614e54ccd1623847b5 *man/anytime-package.Rd
+5f7c71d5a9beb1a9679ca8a9f47b8a52 *man/anytime.Rd
+218ffac65e1ce2cb7af65543175fdbe2 *src/RcppExports.cpp
+e70a99ae1311f97b13556abba678621f *src/anytime.cpp
+d8e57f0413feb49f7883cba97caeb8db *tests/allFormats.R
+1c0267dd9199938b4433d00705a14abc *tests/simpleTests.R
+bc9749d8c55ed4934c0c43f457a416af *tests/validate.R

@@ -1,0 +1,4 @@
+export("anytime",
+       "anydate")
+importFrom(Rcpp, evalCpp)
+useDynLib(anytime, .registration=TRUE)

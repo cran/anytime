@@ -1,0 +1,86 @@
+2016-09-12  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.0.1
+
+	* DESCRIPTION (URL, BugReports): Added
+
+	* src/anytime.cpp (anytime_cpp): Remove roxygen chunk
+	* R/anytime.R (anytime): Add roxygen chunk
+	* man/anytime.Rd: New file (replacing man/anytime_cpp.Rd)
+
+	* NAMESPACE: Do not export anytime_cpp
+
+	* R/anytime.R: Add copyright header
+	* R/utils.R: Ditto
+	* R/init.R: Ditto
+
+2016-09-11  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R (anydate): New function reducing to Date
+
+	* R/anytime.R (anytime): Support factors on input
+
+	* src/anytime.cpp: Extended format list, corrected one special case,
+	document 'anydate' and add roxygen alias, remove some unused code
+	useful only for comparison, added Notesrcp: section with some caveats
+
+	* NAMESPACE: Export anydate
+
+	* tests/simpleTests.R: Expanded
+	* tests/simpleTests.Rout.save: Initially added for proper comparison,
+	deactivated in package as local format make fixed comparison difficult
+
+	* tests/allFormats.R: Added test of all formats
+	* tests/simpleTests.Rout.save: Initially added for proper comparison,
+	deactivated in package as local format make fixed comparison difficult
+
+	* tests/validate.R: Added, full-cycle conversion + comparison with R
+
+	* man/anytime-package.Rd: Rewritten and expanded
+
+	* .Rbuildignore: Do not include *.Rout.save files as default format
+	method will fall back to local time which we cannot override
+
+2016-09-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/init.R (.onLoad): Use Sys.timezone(), and gettz::gettz() if
+	available and needed, to gather and cache timezone value
+
+	* R/utils.R (getTZ): New helper function to get cached TZ value
+
+	* R/anytime.R (anytime): Use getTZ() to get default value
+
+	* tests/simpleTests.R: Use getTZ(), some extensions
+
+	* src/anytime.cpp: small tweaks to formats
+
+	* README.md: Added
+
+2016-09-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .travis.yml: Added, using run.sh from Travis CI
+
+2016-09-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (cToPOSIXct): no longer exported;
+	(charToPOSIXct): Safer assignment for string, no longer export;
+
+	* man/charToPOSIXct.Rd: Removed
+	* man/cToPOSIXct.Rd: Ditto
+
+2016-09-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp: Updated and expanded help texts
+	* man/cToPOSIXct.Rd: Ditto
+	* man/charToPOSIXct.Rd: Ditto
+
+	* tests/simpleTests.R: Some first (and simple) tests
+
+2016-09-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R: Front-end R function testing for Date or POSIXt
+	before dispatching to C++-based converter
+
+	* DESCRIPTION (Package): First commit, using a set of files which
+	originated with the RcppBDT package
+
