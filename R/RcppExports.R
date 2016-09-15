@@ -5,3 +5,27 @@ anytime_cpp <- function(x, tz = "UTC") {
     .Call('anytime_anytime_cpp', PACKAGE = 'anytime', x, tz)
 }
 
+#' The time and date parsing and conversion relies on trying a (given
+#' and fixed) number of timeformats. The format used is the one employed
+#' by the underlying implementation of the Boost date_time library.
+#'
+#' @title Functions to retrieve (or set) formats used for parsing dates.
+#' @param fmt A vector of character values in the form understood by Boost
+#' date_time
+#' @return Nothing in the case of \code{addFormats}; a character vector of
+#' formats in the case of \code{getFormats}
+#' @seealso \code{\link{anytime-package}} and references therein
+#' @author Dirk Eddelbuettel
+#' @examples
+#'   getFormats()
+#'   addFormats(c("%d %b %y",      # two-digit date [not recommended], textual month
+#'                "%a %b %d %Y"))  # weekday weeknumber four-digit year
+getFormats <- function() {
+    .Call('anytime_getFormats', PACKAGE = 'anytime')
+}
+
+#' @rdname getFormats
+addFormats <- function(fmt) {
+    invisible(.Call('anytime_addFormats', PACKAGE = 'anytime', fmt))
+}
+
