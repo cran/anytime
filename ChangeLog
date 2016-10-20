@@ -1,3 +1,42 @@
+2016-10-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.0.4
+
+2016-10-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (anytime_cpp): Also recognise as.numeric()
+	conversions of POSIXt objects
+
+	* R/anytime.R: Expand manual page text with section on Issues, correct
+	working on Notes.
+	* man/anytime.Rd: Ditto
+
+	* tests/allFormats.R: Additional tests
+
+	* README.md: Reformated code display slightly
+
+2016-10-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (convertToTime): Process non-finite values as well
+	and return NA
+
+	* R/init.R (.onLoad): Also test for NA to invoke gettz, and test for
+	NA and NULL before using fallback of UTC (with warning)
+
+2016-10-15  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (convertToTime): Templated conversion avoids UBSAN
+	on a temporary object created from SEXP; renamed from anytime_impl
+
+	* cleanup: New helper script
+
+2016-10-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (sformats[]]): Add several new date(time) formats
+	of the 14OCT2016 variety, with and without hours/minutes
+
+	* tests/allFormats.R: Add new tests as well
+
 2016-10-13  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.0.3
