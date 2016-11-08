@@ -6,14 +6,15 @@
 using namespace Rcpp;
 
 // anytime_cpp
-Rcpp::NumericVector anytime_cpp(SEXP x, const std::string& tz);
-RcppExport SEXP anytime_anytime_cpp(SEXP xSEXP, SEXP tzSEXP) {
+Rcpp::NumericVector anytime_cpp(SEXP x, const std::string& tz, const bool asUTC);
+RcppExport SEXP anytime_anytime_cpp(SEXP xSEXP, SEXP tzSEXP, SEXP asUTCSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type tz(tzSEXP);
-    rcpp_result_gen = Rcpp::wrap(anytime_cpp(x, tz));
+    Rcpp::traits::input_parameter< const bool >::type asUTC(asUTCSEXP);
+    rcpp_result_gen = Rcpp::wrap(anytime_cpp(x, tz, asUTC));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -37,16 +38,39 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// testFormat
-Rcpp::NumericVector testFormat(const std::string fmt, const std::string s, const std::string tz);
-RcppExport SEXP anytime_testFormat(SEXP fmtSEXP, SEXP sSEXP, SEXP tzSEXP) {
+// testFormat_impl
+Rcpp::NumericVector testFormat_impl(const std::string fmt, const std::string s, const std::string tz);
+RcppExport SEXP anytime_testFormat_impl(SEXP fmtSEXP, SEXP sSEXP, SEXP tzSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string >::type fmt(fmtSEXP);
     Rcpp::traits::input_parameter< const std::string >::type s(sSEXP);
     Rcpp::traits::input_parameter< const std::string >::type tz(tzSEXP);
-    rcpp_result_gen = Rcpp::wrap(testFormat(fmt, s, tz));
+    rcpp_result_gen = Rcpp::wrap(testFormat_impl(fmt, s, tz));
+    return rcpp_result_gen;
+END_RCPP
+}
+// testOutput_impl
+std::string testOutput_impl(const std::string fmt, const std::string s);
+RcppExport SEXP anytime_testOutput_impl(SEXP fmtSEXP, SEXP sSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string >::type fmt(fmtSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type s(sSEXP);
+    rcpp_result_gen = Rcpp::wrap(testOutput_impl(fmt, s));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setDebug
+bool setDebug(const bool mode);
+RcppExport SEXP anytime_setDebug(SEXP modeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const bool >::type mode(modeSEXP);
+    rcpp_result_gen = Rcpp::wrap(setDebug(mode));
     return rcpp_result_gen;
 END_RCPP
 }

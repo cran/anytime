@@ -1,3 +1,77 @@
+2016-11-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.1.0
+
+	* tests/validate.R: No call of stopifnot(); Windows always surprises
+
+2016-11-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (sformats[]): Remove one redundant entry present
+	twice, move one entry to related entries
+	(convertToTime): Another special case treatment for hhmmss
+
+	* tests/allFormats.R: Align with current formats
+
+2016-11-05  Bob Jansen <bobjansen@gmail.com>
+
+	* src/anytime.cpp (sformats[]): Add one 'no-separator' format
+
+2016-11-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (sformats[]): Add fractional seconds to four more
+	datetimes, also add one missing format;
+	(isAtLeastGivenLengthAndAllDigits): Another refinement, and generalized;
+	(setDebug): add simple debug routine
+
+2016-11-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (convertToTime): Add logic to cope with the extended
+	'yyyymmdd hhmm[ss[.fff]]' format which needs treatment before parsing
+	* tests/allFormats.R: Added tests
+
+2016-10-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R (testOutput): New simple (unexported) string output function
+	* src/anytime.cpp (testOutput_impl): Implementation
+
+2016-10-24  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version): Rolled version and date
+
+	* R/anytime.R (testFormat): New layer around testFormat_impl testing for RStudio
+	* src/anytime.cpp (testFormat_impl): Renamed from testFormat
+	* R/utils.R (isRStudio): New helper function
+	* R/init.R (.onLoad): At startup, check if we are inside RStudio
+
+2016-10-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (sformats[]): New format for RFC 822 style date
+	* tests/allFormats.R: New test
+
+	* tests/validate.R: Added test for utcparse via stopifnot()
+
+2016-10-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* NAMESPACE: Adding utctime() and utcdate() to export()
+
+	* R/anytime.R: Expanded documentation in Notes section (also
+	merging the Issues section in); expand documentation of the tz
+	argument; expanded examples
+	* man/anytime.Rd: Ditto
+
+	* R/utils.R (setTZ): New (unexported) helper function
+
+2016-10-21  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (anytime_cpp): New option asUTC (defaulting to
+	false) which governs whether parsing is as localtime or UTC
+	(ptToDoubleUTC): New UTC conversion of ptime to double
+	(stringToTime): Dispatch to either ptToDouble or ptToDoubleUTC
+
+	* R/anytime.R (anytime): Document new option asUTC;
+	add and document new callers utctime() and utcdate()
+	* man/anytime.Rd: Document new options and functions
+
 2016-10-20  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.0.4
@@ -32,7 +106,7 @@
 
 2016-10-14  Dirk Eddelbuettel  <edd@debian.org>
 
-	* src/anytime.cpp (sformats[]]): Add several new date(time) formats
+	* src/anytime.cpp (sformats[]): Add several new date(time) formats
 	of the 14OCT2016 variety, with and without hours/minutes
 
 	* tests/allFormats.R: Add new tests as well

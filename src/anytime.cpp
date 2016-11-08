@@ -27,8 +27,11 @@
 
 namespace bt = boost::posix_time;
 
+static bool debug = false;
+
 const std::string sformats[] = {
     "%Y-%m-%d %H:%M:%S%f",
+    "%Y-%m-%d %H%M%S%f",
     "%Y/%m/%d %H:%M:%S%f",
     "%Y%m%d %H%M%S%f",
     "%Y%m%d %H:%M:%S%f",
@@ -42,12 +45,12 @@ const std::string sformats[] = {
     "%Y%b%d %H:%M:%S%F",
     "%b/%d/%Y %H:%M:%S%f",
     "%b-%d-%Y %H:%M:%S%f",
-    "%d.%b.%Y %H:%M:%S%f",
 
-    "%d%b%Y %H%M%S",
-    "%d%b%Y %H:%M:%S",    
-    "%d-%b-%Y %H%M%S",
-    "%d-%b-%Y %H:%M:%S",    
+    "%d.%b.%Y %H:%M:%S%f",
+    "%d%b%Y %H%M%S%f",
+    "%d%b%Y %H:%M:%S%f",
+    "%d-%b-%Y %H%M%S%f",
+    "%d-%b-%Y %H:%M:%S%f",
 
     "%Y-%B-%d %H:%M:%S%f",
     "%Y/%B/%d %H:%M:%S%f",
@@ -60,6 +63,9 @@ const std::string sformats[] = {
     // see http://stackoverflow.com/questions/39259184/formatting-dates-with-r for next one
     "%a %b %d %H:%M:%S%F %Y",
 
+    // see RFC 822 and standard Unix use eg mail headers (but no TZ or UTC offset on input :-/ )
+    "%a %d %b %Y %H:%M:%S%F", 
+    
     "%Y-%m-%d",
     "%Y%m%d",
     "%m/%d/%Y",
@@ -146,9 +152,18 @@ double ptToDouble(const bt::ptime & pt) {
     return totsec - dstadj;
 }
 
+// given a ptime object, return (fractional) seconds since epoch -- at UTC
+double ptToDoubleUTC(const bt::ptime & pt) {
+    const bt::ptime timet_start(boost::gregorian::date(1970,1,1));
+    bt::time_duration tdiff = pt - timet_start;
+    double totsec = tdiff.total_microseconds()/1.0e6;
+    return totsec;
+}
+
+
 // given a string with a (date)time object, try all formats til we parse one
 // conversion of ptime object to double done by ptToDouble()
-double stringToTime(const std::string s) {
+double stringToTime(const std::string s, const bool asUTC=false) {
 
     bt::ptime pt, ptbase;
 
@@ -160,12 +175,52 @@ double stringToTime(const std::string s) {
         is >> pt;
     }
 
-    return (pt == ptbase) ? NAN : ptToDouble(pt);
+    if (pt == ptbase) return NA_REAL; // NA for non-parsed dates
+
+    if (asUTC)
+        return ptToDoubleUTC(pt);
+    else
+        return ptToDouble(pt);
+}
+
+// helper to peel off first two tokens, if any, of a string
+// use to do two things:
+//  i)  split yyyymmdd hhmmss[.fff] into date and time parts
+//  ii) for time part, split possible fractional seconds off
+void stringSplitter(/*const*/ std::string & in, const char split,
+                    std::string & tok1, std::string& tok2) {
+
+    char *txt = const_cast<char*>(in.c_str());
+    tok1 = tok2 = "";
+
+    char *token = std::strtok(txt, &split);
+    if (token != NULL) {
+        tok1 = token;
+        token = std::strtok(NULL, &split);
+        if (token != NULL) {
+            tok2 = token;
+        }
+    }
+    if (debug) Rcpp::Rcout << "In: " << in << " out: " << tok1 << " and " << tok2 << std::endl;
+}
+
+// yes, we could use regular expression -- but then we'd either be C++11 or would
+// require an additional library with header / linking requirement (incl boost regex)
+bool isAtLeastGivenLengthAndAllDigits(const std::string& s, const unsigned int n) {
+    bool res = s.size() >= n;
+    size_t i = 0;
+    while (res && i < n) {
+        res = res && s[i] >= '0' && s[i] <= '9';
+        i++;
+    }
+    if (debug) Rcpp::Rcout << "s: " << s << " len: " << s.size() << " res: " << res << std::endl;
+    return res;
 }
 
 template <class T, int RTYPE>
 Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
-                                  const std::string& tz = "UTC") {
+                                  const std::string& tz = "UTC",
+                                  const bool asUTC = false) {
 
     // step one: create a results vector, and class it as POSIXct
     int n = sxpvec.size();
@@ -181,37 +236,73 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
         // but with templating to T this is straightforward enough
         T val = sxpvec[i];
         std::string s = boost::lexical_cast<std::string>(val);
-
+        
         if (s == "NA") {
             pv[i] = NA_REAL;
-            
         } else {
+            if (debug) Rcpp::Rcout << "before tests: " << s << std::endl;
             // Boost Date_Time gets the 'YYYYMMDD' format wrong, even
             // when given as an explicit argument. So we need to test here.
             // While we're at it, may as well test for obviously wrong data.
-            int l = s.size();
-            if (l < 8) { 	        // too short
-                Rcpp::stop("Inadmissable input: %s", s);
-            } else if (l == 8) {    // turn YYYYMMDD into YYYY/MM/DD
-                s = s.substr(0, 4) + "/" + s.substr(4, 2) + "/" + s.substr(6,2);
-            }
+            std::string one = "", two = "", three = "", inp = s;
+            stringSplitter(inp, ' ', one, two);
+            if (isAtLeastGivenLengthAndAllDigits(one, 8)) {
+                one = one.substr(0, 4) + "-" + one.substr(4, 2) + "-" + one.substr(6,2);
 
+                if ((two.size()==5 || two.size() >= 8) &&          // if we have hh:mm or hh:mm:ss[.ffffff]
+                    !isAtLeastGivenLengthAndAllDigits(two, 6)) {  // and it is not hhmmss
+                    three = "";                         // do nothing, three remains ""
+                } else {
+                    inp = two;
+
+                    // The 'YYYYMMDD' format can of course be followed by either
+                    // 'HHMMSS' or 'HHMM' or 'HHMMSS.fffffff' so we cover these cases
+                    stringSplitter(inp, '.', two, three);
+                    if (two.size() == 6) {
+                        two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
+                    } else if (two.size() == 4) {
+                        two = two.substr(0, 2) + ":" + two.substr(2, 2);
+                    }
+                }
+                
+                s = one + " " + two;
+                if (three != "") {
+                    s = s + "." + three;
+                }
+                    
+                if (debug) Rcpp::Rcout << "s: " << s
+                                       << " one: " << one
+                                       << " two: " << two << " "
+                                       << " three: " << three << std::endl;
+            } else if (isAtLeastGivenLengthAndAllDigits(two, 6)) {
+                if (two.size() == 6) {
+                    two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
+                }
+                s = one + " " + two;
+            } else {
+                if (debug) Rcpp::Rcout << "One: " << one << " " << "two: " << two << std::endl;
+            }
+            
+            if (debug) Rcpp::Rcout << "before parse: " << s << std::endl;
+            
             // Given the string, convert to a POSIXct using an interim double
             // of fractional seconds since the epoch
-            pv[i] = stringToTime(s);
+            pv[i] = stringToTime(s, asUTC);
         }
     }
     return pv;
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector anytime_cpp(SEXP x, const std::string& tz = "UTC") {
+Rcpp::NumericVector anytime_cpp(SEXP x,
+                                const std::string& tz = "UTC",
+                                const bool asUTC = false) {
 
     if (Rcpp::is<Rcpp::CharacterVector>(x)) {
-        return convertToTime<const char*, STRSXP>(x, tz);
+        return convertToTime<const char*, STRSXP>(x, tz, asUTC);
         
     } else if (Rcpp::is<Rcpp::IntegerVector>(x)) {
-        return convertToTime<int, INTSXP>(x, tz);
+        return convertToTime<int, INTSXP>(x, tz, asUTC);
 
     } else if (Rcpp::is<Rcpp::NumericVector>(x)) {
         // here we have two cases: either we are an int like
@@ -220,11 +311,11 @@ Rcpp::NumericVector anytime_cpp(SEXP x, const std::string& tz = "UTC") {
         Rcpp::NumericVector v(x);
         if (v[0] < 21990101) {  // somewhat arbitrary cuttoff
             // actual integer date notation: convert to string and parse
-            return convertToTime<double, REALSXP>(x, tz);
+            return convertToTime<double, REALSXP>(x, tz, asUTC);
         } else {
             // we think it is a numeric time, so treat it as one
             v.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
-            v.attr("tzone") = tz;
+            v.attr("tzone") = asUTC ? "UTC" : tz;
             return v;
         }
         
@@ -265,7 +356,9 @@ void addFormats(Rcpp::CharacterVector fmt) {
 
 
 // [[Rcpp::export]]
-Rcpp::NumericVector testFormat(const std::string fmt, const std::string s, const std::string tz = "") {
+Rcpp::NumericVector testFormat_impl(const std::string fmt,
+                                    const std::string s,
+                                    const std::string tz = "") {
     
     bt::ptime pt, ptbase;
 
@@ -283,4 +376,27 @@ Rcpp::NumericVector testFormat(const std::string fmt, const std::string s, const
     pv.attr("tzone") = tz;
     
     return pv;
+}
+
+// [[Rcpp::export]]
+std::string testOutput_impl(const std::string fmt,
+                            const std::string s) {
+
+    // doing anything with an actual output _format_ requires a timezone
+    // for which we need to load timezone information _from the Boost file_
+    // which we generally do not have -- though RcppBDT ships it
+    bt::ptime pt;
+    std::istringstream is(s);
+    std::locale inloc = std::locale(std::locale::classic(), new bt::time_input_facet(fmt));
+    is.imbue(inloc);
+    is >> pt;
+    std::ostringstream os;
+    os << pt;
+    return os.str();
+}
+
+// [[Rcpp::export]]
+bool setDebug(const bool mode) {
+    debug = mode;
+    return debug;
 }
