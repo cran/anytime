@@ -187,10 +187,11 @@ double stringToTime(const std::string s, const bool asUTC=false) {
 // use to do two things:
 //  i)  split yyyymmdd hhmmss[.fff] into date and time parts
 //  ii) for time part, split possible fractional seconds off
-void stringSplitter(/*const*/ std::string & in, const char split,
+void stringSplitter(const std::string & in, const char split,
                     std::string & tok1, std::string& tok2) {
 
-    char *txt = const_cast<char*>(in.c_str());
+    std::string cp = in;        // make another copy to keep input string alone
+    char *txt = const_cast<char*>(cp.c_str());
     tok1 = tok2 = "";
 
     char *token = std::strtok(txt, &split);
@@ -249,9 +250,9 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
             if (isAtLeastGivenLengthAndAllDigits(one, 8)) {
                 one = one.substr(0, 4) + "-" + one.substr(4, 2) + "-" + one.substr(6,2);
 
-                if ((two.size()==5 || two.size() >= 8) &&          // if we have hh:mm or hh:mm:ss[.ffffff]
-                    !isAtLeastGivenLengthAndAllDigits(two, 6)) {  // and it is not hhmmss
-                    three = "";                         // do nothing, three remains ""
+                if ((two.size()==5 || two.size() >= 8) &&          	// if we have hh:mm or hh:mm:ss[.ffffff]
+                    !isAtLeastGivenLengthAndAllDigits(two, 6)) { 	// and it is not hhmmss
+                    three = "";    	                     		// do nothing, three remains ""
                 } else {
                     inp = two;
 
@@ -270,10 +271,9 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
                     s = s + "." + three;
                 }
                     
-                if (debug) Rcpp::Rcout << "s: " << s
-                                       << " one: " << one
-                                       << " two: " << two << " "
-                                       << " three: " << three << std::endl;
+                if (debug) Rcpp::Rcout << "s: " << s << " one: " << one << " two: ";
+                if (debug) Rcpp::Rcout << two << " " << " three: " << three << std::endl;
+               
             } else if (isAtLeastGivenLengthAndAllDigits(two, 6)) {
                 if (two.size() == 6) {
                     two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
@@ -320,7 +320,11 @@ Rcpp::NumericVector anytime_cpp(SEXP x,
         }
         
     } else {
-        Rcpp::stop("Unsupported Type");
+#if RCPP_DEV_VERSION >= RcppDevVersion(0,12,8,1)
+        Rcpp::stop("Unsupported Type");	// bug in 0.12.{7,8}; only Rcpp 0.12.8.1 or later
+#else
+        throw std::invalid_argument("Unsupported Type");
+#endif        
         return R_NilValue;//not reached
     }
 }

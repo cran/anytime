@@ -3,6 +3,18 @@
 \newcommand{\ghpr}{\href{https://github.com/eddelbuettel/anytime/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/eddelbuettel/anytime/issues/#1}{##1}}
 
+\section{Changes in anytime version 0.1.1 (2016-11-27)}{
+  \itemize{
+    \item Both \code{anydate()} and \code{utcdate()} no longer attempt
+    to convert an input value that is already of type \code{Date}.
+    \item The string splitter (needed for the 'all-digits' formats
+    extending Boost Date_time) is now more defensive about the input
+    argument and more robust. Thanks to Bob Jansen for the heads-up
+    (PR \ghpr{30} closing issue \ghit{29}).
+    \item Code coverage reporting has been added (PR \ghpr{31}).
+  }
+}
+
 \section{Changes in anytime version 0.1.0 (2016-11-06)}{
   \itemize{
     \item New functions \code{utctime()} and \code{utcdate()} were
