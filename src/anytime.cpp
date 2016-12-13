@@ -23,9 +23,14 @@
 #include <boost/date_time/local_time_adjustor.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/split.hpp>
+
 #include <Rcpp.h>
 
 namespace bt = boost::posix_time;
+namespace ba = boost::algorithm;
 
 static bool debug = false;
 
@@ -187,33 +192,19 @@ double stringToTime(const std::string s, const bool asUTC=false) {
 // use to do two things:
 //  i)  split yyyymmdd hhmmss[.fff] into date and time parts
 //  ii) for time part, split possible fractional seconds off
-void stringSplitter(const std::string & in, const char split,
+void stringSplitter(const std::string & in, const std::string spliton,
                     std::string & tok1, std::string& tok2) {
-
-    std::string cp = in;        // make another copy to keep input string alone
-    char *txt = const_cast<char*>(cp.c_str());
-    tok1 = tok2 = "";
-
-    char *token = std::strtok(txt, &split);
-    if (token != NULL) {
-        tok1 = token;
-        token = std::strtok(NULL, &split);
-        if (token != NULL) {
-            tok2 = token;
-        }
-    }
+    std::vector<std::string> splitvec;
+    boost::split(splitvec, in, boost::is_any_of(spliton), boost::token_compress_on);
+    tok1 = splitvec[0];
+    tok2 = splitvec.size() > 1 ? splitvec[1] : "";
     if (debug) Rcpp::Rcout << "In: " << in << " out: " << tok1 << " and " << tok2 << std::endl;
 }
 
 // yes, we could use regular expression -- but then we'd either be C++11 or would
 // require an additional library with header / linking requirement (incl boost regex)
 bool isAtLeastGivenLengthAndAllDigits(const std::string& s, const unsigned int n) {
-    bool res = s.size() >= n;
-    size_t i = 0;
-    while (res && i < n) {
-        res = res && s[i] >= '0' && s[i] <= '9';
-        i++;
-    }
+    bool res = s.size() >= n && ba::all(s.substr(0, n), ba::is_digit());
     if (debug) Rcpp::Rcout << "s: " << s << " len: " << s.size() << " res: " << res << std::endl;
     return res;
 }
@@ -246,7 +237,7 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
             // when given as an explicit argument. So we need to test here.
             // While we're at it, may as well test for obviously wrong data.
             std::string one = "", two = "", three = "", inp = s;
-            stringSplitter(inp, ' ', one, two);
+            stringSplitter(inp, " ", one, two);
             if (isAtLeastGivenLengthAndAllDigits(one, 8)) {
                 one = one.substr(0, 4) + "-" + one.substr(4, 2) + "-" + one.substr(6,2);
 
@@ -258,7 +249,7 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
 
                     // The 'YYYYMMDD' format can of course be followed by either
                     // 'HHMMSS' or 'HHMM' or 'HHMMSS.fffffff' so we cover these cases
-                    stringSplitter(inp, '.', two, three);
+                    stringSplitter(inp, ".", two, three);
                     if (two.size() == 6) {
                         two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
                     } else if (two.size() == 4) {
@@ -403,4 +394,18 @@ std::string testOutput_impl(const std::string fmt,
 bool setDebug(const bool mode) {
     debug = mode;
     return debug;
+}
+
+// [[Rcpp::export]]
+std::vector<std::string> format(Rcpp::NumericVector x) {
+    std::vector<std::string> z(x.size());
+    for (int i=0; i<x.size(); i++) {
+        Rcpp::Datetime d(x[i]);
+#if RCPP_DEV_VERSION >= RcppDevVersion(0,12,8,2)
+        z[i] = d.format();
+#else
+        z[i] = "";
+#endif        
+    }
+    return z;
 }

@@ -1,3 +1,34 @@
+2016-12-13  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.1.2 
+
+2016-12-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (isAtLeastGivenLengthAndAllDigits): Simplified
+	using Boost classification and predicate use
+
+2016-12-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (format): Condition only on Rcpp version
+
+	* tests/utilities.R: Call anytime:::format()
+
+2016-12-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll format and date
+
+	* src/anytime.cpp (stringSplitter): Correct small oversight and split
+	on actual 'spliton' argument
+
+	* tests/gh_issue_33.R: Added to test most of GH issue
+	* tests/allFormats.R: Minor edit
+
+2016-12-03  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (stringSplitter): Split string with
+	boost::algorithm instead of strtok which appears to fail on 64-bit
+	windows.
+
 2016-11-27  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.1.1
