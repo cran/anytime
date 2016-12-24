@@ -1,6 +1,61 @@
+2016-12-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): Roll minor version
+
+	* R/formats.R (iso8601, rfc2822, rfc3339): New helper functions
+
+	* man/iso8601.Rd: New documentation for the new functions
+
+	* NAMESPACE: Exporting new functions
+
+	* tests/simpleTests.R: New simple tests
+
+	* tests/gh_issue_5.R: Skip two tests if on Windows
+
+2016-12-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R (anydate, utcdate): Ensure Date object is returned
+
+2016-12-21  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/simpleTests.R: More tests
+	* tests/gh_issue_5.R: Idem
+
+2016-12-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/allFormats.R: Significantly increased number of tests
+
+2016-12-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/bulkTest.R: Improved testing for POSIXct and Date
+	* tests/gh_issue_12.R: Additional testing
+
+2016-12-18  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version and date
+
+	* src/anytime.cpp (anytime_cpp): New option asDate
+	(convertToTime): Idem
+	(stringToTime): Idem
+	(ptToDoubleUTC): Idem
+	(ptToDouble): Idem
+
+	* R/anytime.R (anydate): Now calls anytime_cpp with asDate=TRUE
+	(utcdate): Idem
+
+	* tests/allFormats.R: Minor fix, additional call
+
+	* tests/bulkTest.R (fullEx): New bulk formatting test
+
+2016-12-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (sformats[]): Add ISO8601 format
+
+	* tests/allFormats.R: Tests for ISO8601 format
+
 2016-12-13  Dirk Eddelbuettel  <edd@debian.org>
 
-	* DESCRIPTION (Version, Date): Release 0.1.2 
+	* DESCRIPTION (Version, Date): Release 0.1.2
 
 2016-12-06  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -15,7 +70,7 @@
 
 2016-12-04  Dirk Eddelbuettel  <edd@debian.org>
 
-	* DESCRIPTION (Version, Date): Roll format and date
+	* DESCRIPTION (Version, Date): Roll version and date
 
 	* src/anytime.cpp (stringSplitter): Correct small oversight and split
 	on actual 'spliton' argument
