@@ -2,7 +2,7 @@
 //
 // anytime: Use Boost Date_Time to convert date(time) data to POSIXt
 //
-// Copyright (C) 2015 - 2016  Dirk Eddelbuettel
+// Copyright (C) 2015 - 2017  Dirk Eddelbuettel
 //
 // This file is part of anytime.
 //
@@ -27,6 +27,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
+// this is an opt-in until late 2017 when it will be the default
+#define RCPP_NEW_DATE_DATETIME_VECTORS 1
 #include <Rcpp.h>
 
 namespace bt = boost::posix_time;
@@ -74,6 +76,10 @@ const std::string sformats[] = {
     // See the Boost documentation, tz specifications (%q %Q %z %Z) are _ignored_ on input
     // http://www.boost.org/doc/libs/1_62_0/doc/html/date_time/date_time_io.html#date_time.time_input_facet
     "%Y-%m-%d %H:%M:%S%Z",      
+
+    // Issue 47: support formats like "Thu Jan 17 09:29:10 EST 2013" by ignoring the three-char TZ
+    // also support fractional seconds if present
+    "%a %b %d %H:%M:%S%F xxx %Y",
     
     "%Y-%m-%d",
     "%Y%m%d",
@@ -232,13 +238,13 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
 
     // step one: create a results vector, and class it as POSIXct
     int n = sxpvec.size();
-    Rcpp::NumericVector pv(n);
-    if (asDate) {
-        pv.attr("class") = Rcpp::CharacterVector::create("Date");
-    } else {
-        pv.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
-    }
-    pv.attr("tzone") = tz;
+    Rcpp::DatetimeVector pv(n, tz.c_str());
+    // if (asDate) {
+    //     pv.attr("class") = Rcpp::CharacterVector::create("Date");
+    // } else {
+    //     pv.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
+    // }
+    // pv.attr("tzone") = tz;
 
     // step two: loop over input, cast each element to string and then convert
     for (int i=0; i<n; i++) {
@@ -301,6 +307,9 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
             pv[i] = stringToTime(s, asUTC, asDate);
         }
     }
+    if (asDate) {               // if we wanted Date types, set class
+        pv.attr("class") = Rcpp::CharacterVector::create("Date");
+    }
     return pv;
 }
 
@@ -322,7 +331,7 @@ Rcpp::NumericVector anytime_cpp(SEXP x,
         // here we have two cases: either we are an int like
         // 200150315 'mistakenly' cast to numeric, or we actually
         // are a proper large numeric (ie as.numeric(Sys.time())
-        Rcpp::NumericVector v(x);
+        Rcpp::DatetimeVector v(x, asUTC ? "UTC" : tz.c_str());
         if (v[0] <= 29991231) {  // somewhat arbitrary cuttoff
             // actual integer date notation: convert to string via lexical cast
             // and then parse that string as usual
@@ -331,18 +340,12 @@ Rcpp::NumericVector anytime_cpp(SEXP x,
             // so here we are a large number -- which we could just assign
             // as use a numeric representation, but then there is the asDate case
             // but that gets covered on the R side in anydate() _ utcdate()
-            // so we can simply convert this here
-            v.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
-            v.attr("tzone") = asUTC ? "UTC" : tz;
+            // so we can simply return as the already created Datetime vector
             return v;
         }
         
     } else {
-#if RCPP_DEV_VERSION >= RcppDevVersion(0,12,8,1)
-        Rcpp::stop("Unsupported Type");	// bug in 0.12.{7,8}; only Rcpp 0.12.8.1 or later
-#else
-        throw std::invalid_argument("Unsupported Type");
-#endif        
+        Rcpp::stop("Unsupported Type");	// bug in 0.12.{7,8}; Rcpp 0.12.9 or latyer ok
         return R_NilValue;//not reached
     }
 }
@@ -392,10 +395,8 @@ Rcpp::NumericVector testFormat_impl(const std::string fmt,
 
     double timeval = (pt == ptbase) ? NAN : ptToDouble(pt);
 
-    Rcpp::NumericVector pv(1);
+    Rcpp::DatetimeVector pv(1, tz.c_str());
     pv(0) = timeval;
-    pv.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
-    pv.attr("tzone") = tz;
     
     return pv;
 }

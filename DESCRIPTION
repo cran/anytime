@@ -1,8 +1,8 @@
 Package: anytime
 Type: Package
 Title: Anything to 'POSIXct' or 'Date' Converter
-Version: 0.2.0
-Date: 2016-12-24
+Version: 0.2.1
+Date: 2017-02-09
 Author: Dirk Eddelbuettel
 Maintainer: Dirk Eddelbuettel <edd@debian.org>
 Description: Convert input in any one of character, integer, numeric, factor,
@@ -12,11 +12,12 @@ URL: http://dirk.eddelbuettel.com/code/anytime.html
 BugReports: https://github.com/eddelbuettel/anytime/issues
 License: GPL (>= 2)
 Encoding: UTF-8
-Imports: Rcpp
-LinkingTo: Rcpp, BH
+Depends: R (>= 3.2.0)
+Imports: Rcpp (>= 0.12.9)
+LinkingTo: Rcpp (>= 0.12.9), BH
 Suggests: gettz
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.0
 NeedsCompilation: yes
-Packaged: 2016-12-24 14:17:36.871605 UTC; edd
+Packaged: 2017-02-09 11:38:15.659276 UTC; edd
 Repository: CRAN
-Date/Publication: 2016-12-24 18:45:57
+Date/Publication: 2017-02-09 15:24:06
