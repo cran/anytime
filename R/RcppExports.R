@@ -45,3 +45,15 @@ format <- function(x) {
     .Call('anytime_format', PACKAGE = 'anytime', x)
 }
 
+setMaxIntAsYYYYMMDD <- function(val) {
+    invisible(.Call('anytime_setMaxIntAsYYYYMMDD', PACKAGE = 'anytime', val))
+}
+
+setMaxIntAsDate <- function(val) {
+    invisible(.Call('anytime_setMaxIntAsDate', PACKAGE = 'anytime', val))
+}
+
+setInitialTZ <- function(tz) {
+    invisible(.Call('anytime_setInitialTZ', PACKAGE = 'anytime', tz))
+}
+

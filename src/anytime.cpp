@@ -34,7 +34,9 @@
 namespace bt = boost::posix_time;
 namespace ba = boost::algorithm;
 
-static bool debug = false;
+static bool debug = false;              // set to true (from R, see below) for debug messages 
+static int maxIntAsYYYYMMDD = 29991231; // cutoff values below which we treat ints as YYYYMMDD  
+static int maxIntAsDate = 199999;       // cutoff values below which we treat ints as Dates
 
 const std::string sformats[] = {
     "%Y-%m-%d %H:%M:%S%f",
@@ -130,6 +132,7 @@ public:
 };
 
 static TimeFormats timeformats;
+static std::string setupTZ;
 
 // given a ptime object, return (fractional) seconds since epoch
 // account for localtime, and also account for dst
@@ -307,6 +310,15 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
             pv[i] = stringToTime(s, asUTC, asDate);
         }
     }
+    // There is an issue with datetime parsing under TZ=Europe/London, see eg #36 and #51
+    // We think this is caused by Boost but as we return to R for formating we need to adjust
+    if (setupTZ == "Europe/London") {					// #nocov start
+        //Rcpp::Rcerr << "Putzing\n";
+        const double cutoff = 57722400; // 1971-10-31 02:00:00 was a policy change
+        for (int i=0; i<pv.size(); i++) {
+            pv[i] = pv[i] + 3600 * (pv[i] >= cutoff);
+        }
+    }                                                                   // #nocov end
     if (asDate) {               // if we wanted Date types, set class
         pv.attr("class") = Rcpp::CharacterVector::create("Date");
     }
@@ -322,27 +334,26 @@ Rcpp::NumericVector anytime_cpp(SEXP x,
     if (Rcpp::is<Rcpp::CharacterVector>(x)) {
         // already a character -- so parse from character and convert
         return convertToTime<const char*, STRSXP>(x, tz, asUTC, asDate);
+               
+    } else if ((Rcpp::is<Rcpp::NumericVector>(x) && REAL(x)[0]    <= maxIntAsDate) ||
+               (Rcpp::is<Rcpp::IntegerVector>(x) && INTEGER(x)[0] <= maxIntAsDate)    ) {
+        // if numeric or integer and below date cutoff, treat as (already numeric/int) date
+        return Rcpp::DateVector(x);
         
-    } else if (Rcpp::is<Rcpp::IntegerVector>(x)) {
-        // use lexical cast to convert an int to character -- then parse and convert
+    } else if (Rcpp::is<Rcpp::IntegerVector>(x) && INTEGER(x)[0] <= maxIntAsYYYYMMDD) {
+        // actual integer date notation: convert to string via lexical cast
+        // and then parse that string as usual
         return convertToTime<int, INTSXP>(x, tz, asUTC, asDate);
 
-    } else if (Rcpp::is<Rcpp::NumericVector>(x)) {
-        // here we have two cases: either we are an int like
-        // 200150315 'mistakenly' cast to numeric, or we actually
-        // are a proper large numeric (ie as.numeric(Sys.time())
-        Rcpp::DatetimeVector v(x, asUTC ? "UTC" : tz.c_str());
-        if (v[0] <= 29991231) {  // somewhat arbitrary cuttoff
-            // actual integer date notation: convert to string via lexical cast
-            // and then parse that string as usual
-            return convertToTime<double, REALSXP>(x, tz, asUTC, asDate);
-        } else {
-            // so here we are a large number -- which we could just assign
-            // as use a numeric representation, but then there is the asDate case
-            // but that gets covered on the R side in anydate() _ utcdate()
-            // so we can simply return as the already created Datetime vector
-            return v;
-        }
+    } else if (Rcpp::is<Rcpp::NumericVector>(x) && REAL(x)[0] <= maxIntAsYYYYMMDD) {
+        // actual integer date notation: convert to string via lexical cast
+        // and then parse that string as usual
+        return convertToTime<double, REALSXP>(x, tz, asUTC, asDate);
+
+    } else if (Rcpp::is<Rcpp::NumericVector>(x) || Rcpp::is<Rcpp::IntegerVector>(x)) {
+        // now we actually should have a proper large numeric (ie as.numeric(Sys.time())
+        // so we can simply return as the already created Datetime vector
+        return Rcpp::DatetimeVector(x, asUTC ? "UTC" : tz.c_str());
         
     } else {
         Rcpp::stop("Unsupported Type");	// bug in 0.12.{7,8}; Rcpp 0.12.9 or latyer ok
@@ -436,4 +447,19 @@ std::vector<std::string> format(Rcpp::NumericVector x) {
 #endif        
     }
     return z;
+}
+
+// [[Rcpp::export]]
+void setMaxIntAsYYYYMMDD(const int val) {
+    maxIntAsYYYYMMDD = val;
+}
+
+// [[Rcpp::export]]
+void setMaxIntAsDate(const int val) {
+    maxIntAsDate = val;
+}
+
+// [[Rcpp::export]]
+void setInitialTZ(std::string tz) {
+    setupTZ = tz;
 }

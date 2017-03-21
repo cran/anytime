@@ -86,3 +86,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// setMaxIntAsYYYYMMDD
+void setMaxIntAsYYYYMMDD(const int val);
+RcppExport SEXP anytime_setMaxIntAsYYYYMMDD(SEXP valSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type val(valSEXP);
+    setMaxIntAsYYYYMMDD(val);
+    return R_NilValue;
+END_RCPP
+}
+// setMaxIntAsDate
+void setMaxIntAsDate(const int val);
+RcppExport SEXP anytime_setMaxIntAsDate(SEXP valSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type val(valSEXP);
+    setMaxIntAsDate(val);
+    return R_NilValue;
+END_RCPP
+}
+// setInitialTZ
+void setInitialTZ(std::string tz);
+RcppExport SEXP anytime_setInitialTZ(SEXP tzSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type tz(tzSEXP);
+    setInitialTZ(tz);
+    return R_NilValue;
+END_RCPP
+}

@@ -3,16 +3,31 @@
 \newcommand{\ghpr}{\href{https://github.com/eddelbuettel/anytime/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/eddelbuettel/anytime/issues/#1}{##1}}
 
+\section{Changes in anytime version 0.2.2 (2017-03-21)}{
+  \itemize{
+    \item Address corner case of integer-typed (large) values
+    corresponding to \code{POSIXct} time (PR \ghpr{57} closing \ghit{#56})
+    \item Add special case for \sQuote{Europe/London} and 31 Oct 1971
+    BST change to avoid a one-hour offset error (\ghpr{58} fixing
+    \ghit{36} and \ghit{51}) 
+    \item Address another corner case of numeric values corresponding to
+    \code{Date} types which are now returned as \code{Date}
+    \item Added file \code{init.c} with calls to \code{R_registerRoutines()}
+    \code{and R_useDynamicSymbols()}; already used \code{.registration=TRUE}
+    in \code{useDynLib} in \code{NAMESPACE}
+  }
+}
+
 \section{Changes in anytime version 0.2.1 (2017-02-09)}{
   \itemize{
     \item The new \code{DatetimeVector} class from \CRANpkg{Rcpp} is now
-    used, and proper versioned Depends: have been added (\ghpr{43})
+    used, and proper versioned Depends: have been added (PR \ghpr{43})
     \item The \code{anydate} and \code{utcdate} functions convert again
-    from factor and ordered (\ghpr{46} closing \ghit{44})
+    from factor and ordered (PR \ghpr{46} closing \ghit{44})
     \item A format similar to RFC 28122 but with additonal timezone text
-    can now be parsed (\ghpr{48} closing \ghit{47})
+    can now be parsed (PR \ghpr{48} closing \ghit{47})
     \item Conversion from \code{POSIXt} to \code{Date} now also respect
-    the timezone (\ghpr{50} closing \ghit{49})
+    the timezone (PR \ghpr{50} closing \ghit{49})
     \item The internal \code{.onLoad} functions was updated
     \item The Travis setup uses https to fetch the run script
   }
