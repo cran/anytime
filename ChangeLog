@@ -1,3 +1,47 @@
+2017-06-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.0
+
+	* README.md: Use alternate for img.shields.io GPL-2+ badge
+
+2017-05-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/RcppExports.cpp (R_init_anytime): Registration now here
+	* src/init.c: Deleted as calls now made in RcppExports.cpp
+	* R/RcppExports.R: Updated by Rcpp 0.12.11 as well
+
+2017-05-12  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp: Numeric input now always interpreted as offset
+	to epoch, with 'anytime()' and 'anydate()' working more consistently
+
+	* R/anytime.R: Document new 'oldHeuristic' option to re-enable old
+	behaviour.
+	* man/anytime.Rd: Idem
+
+	* tests/simpleTests.R: Adjust for new behaviour, ie use oldHeuristic=TRUE
+
+2017-04-15  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/init.R (.onLoad): Typo fix
+
+2017-04-02  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): Roll minor version
+
+	* src/anytime.cpp (r_anytime_cpp): Adding support for parsing
+	functionality from the C API for R via package RApiDatetime
+
+	* .editorconfig: Adding editorconfig supprt
+
+	* .travis.yml (install): Add r-cran-rapidatetime
+
+2017-03-31  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/init.R (.onLoad): The 'isRStudio' test has been refined to allow
+	RStudio versions 1.1.129 or later which no longer conflict with Boost
+	* R/anytime.R (testFormat, testOutput): Message reworded
+
 2017-03-21  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.2.2
@@ -461,4 +505,3 @@
 
 	* DESCRIPTION (Package): First commit, using a set of files which
 	originated with the RcppBDT package
-

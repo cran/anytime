@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // anytime_cpp
-Rcpp::NumericVector anytime_cpp(SEXP x, const std::string& tz, const bool asUTC, const bool asDate);
-RcppExport SEXP anytime_anytime_cpp(SEXP xSEXP, SEXP tzSEXP, SEXP asUTCSEXP, SEXP asDateSEXP) {
+Rcpp::NumericVector anytime_cpp(SEXP x, const std::string& tz, const bool asUTC, const bool asDate, const bool useR, const bool oldHeuristic);
+RcppExport SEXP anytime_anytime_cpp(SEXP xSEXP, SEXP tzSEXP, SEXP asUTCSEXP, SEXP asDateSEXP, SEXP useRSEXP, SEXP oldHeuristicSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,7 +15,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type tz(tzSEXP);
     Rcpp::traits::input_parameter< const bool >::type asUTC(asUTCSEXP);
     Rcpp::traits::input_parameter< const bool >::type asDate(asDateSEXP);
-    rcpp_result_gen = Rcpp::wrap(anytime_cpp(x, tz, asUTC, asDate));
+    Rcpp::traits::input_parameter< const bool >::type useR(useRSEXP);
+    Rcpp::traits::input_parameter< const bool >::type oldHeuristic(oldHeuristicSEXP);
+    rcpp_result_gen = Rcpp::wrap(anytime_cpp(x, tz, asUTC, asDate, useR, oldHeuristic));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -115,4 +117,23 @@ BEGIN_RCPP
     setInitialTZ(tz);
     return R_NilValue;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"anytime_anytime_cpp", (DL_FUNC) &anytime_anytime_cpp, 6},
+    {"anytime_getFormats", (DL_FUNC) &anytime_getFormats, 0},
+    {"anytime_addFormats", (DL_FUNC) &anytime_addFormats, 1},
+    {"anytime_testFormat_impl", (DL_FUNC) &anytime_testFormat_impl, 3},
+    {"anytime_testOutput_impl", (DL_FUNC) &anytime_testOutput_impl, 2},
+    {"anytime_setDebug", (DL_FUNC) &anytime_setDebug, 1},
+    {"anytime_format", (DL_FUNC) &anytime_format, 1},
+    {"anytime_setMaxIntAsYYYYMMDD", (DL_FUNC) &anytime_setMaxIntAsYYYYMMDD, 1},
+    {"anytime_setMaxIntAsDate", (DL_FUNC) &anytime_setMaxIntAsDate, 1},
+    {"anytime_setInitialTZ", (DL_FUNC) &anytime_setInitialTZ, 1},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_anytime(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

@@ -31,11 +31,13 @@
 #define RCPP_NEW_DATE_DATETIME_VECTORS 1
 #include <Rcpp.h>
 
+#include <RApiDatetime.h>
+
 namespace bt = boost::posix_time;
 namespace ba = boost::algorithm;
 
-static bool debug = false;              // set to true (from R, see below) for debug messages 
-static int maxIntAsYYYYMMDD = 29991231; // cutoff values below which we treat ints as YYYYMMDD  
+static bool debug = false;              // set to true (from R, see below) for debug messages
+static int maxIntAsYYYYMMDD = 29991231; // cutoff values below which we treat ints as YYYYMMDD
 static int maxIntAsDate = 199999;       // cutoff values below which we treat ints as Dates
 
 const std::string sformats[] = {
@@ -68,21 +70,21 @@ const std::string sformats[] = {
     "%B/%d/%Y %H:%M:%S%f",
     "%B-%d-%Y %H:%M:%S%f",
     "%d.%B.%Y %H:%M:%S%f",
-    
+
     // see http://stackoverflow.com/questions/39259184/formatting-dates-with-r for next one
     "%a %b %d %H:%M:%S%F %Y",
 
     // see RFC 822 and standard Unix use eg mail headers (but no TZ or UTC offset on input :-/ )
-    "%a %d %b %Y %H:%M:%S%F", 
+    "%a %d %b %Y %H:%M:%S%F",
 
     // See the Boost documentation, tz specifications (%q %Q %z %Z) are _ignored_ on input
     // http://www.boost.org/doc/libs/1_62_0/doc/html/date_time/date_time_io.html#date_time.time_input_facet
-    "%Y-%m-%d %H:%M:%S%Z",      
+    "%Y-%m-%d %H:%M:%S%Z",
 
     // Issue 47: support formats like "Thu Jan 17 09:29:10 EST 2013" by ignoring the three-char TZ
     // also support fractional seconds if present
     "%a %b %d %H:%M:%S%F xxx %Y",
-    
+
     "%Y-%m-%d",
     "%Y%m%d",
     "%m/%d/%Y",
@@ -153,7 +155,7 @@ double ptToDouble(const bt::ptime & pt, const bool asDate=false) {
         if (debug) Rcpp::Rcout << "days " << pt.date().day_number() - timet_start.date().day_number() << std::endl;
         return static_cast<double>(pt.date().day_number()) - static_cast<double>(timet_start.date().day_number());
     }
-    
+
     // hack-ish: go back to struct tm to use its tm_isdst field
     time_t secsSinceEpoch = tdiff.total_seconds();
     struct tm* localAsTm = localtime(&secsSinceEpoch);
@@ -182,7 +184,7 @@ double ptToDoubleUTC(const bt::ptime & pt, const bool asDate=false) {
     if (asDate) {
         return static_cast<double>(pt.date().day_number()) - static_cast<double>(timet_start.date().day_number());
     }
-    
+
     bt::time_duration tdiff = pt - timet_start;
     double totsec = tdiff.total_microseconds()/1.0e6;
     return totsec;
@@ -204,7 +206,7 @@ double stringToTime(const std::string s, const bool asUTC=false, const bool asDa
     }
 
     if (pt == ptbase) return NA_REAL; // NA for non-parsed dates
-                    
+
     if (asUTC) {
         return ptToDoubleUTC(pt, asDate);
     } else {
@@ -233,11 +235,102 @@ bool isAtLeastGivenLengthAndAllDigits(const std::string& s, const unsigned int n
     return res;
 }
 
+// ---
+// R-based ranytime below
+
+const std::string rformats[] = {
+    "%Y-%m-%d %H:%M:%OS",
+    "%Y-%m-%d %H%M%OS",
+    "%Y/%m/%d %H:%M:%OS",
+    "%Y%m%d %H%M%OS",
+    "%Y%m%d %H:%M:%OS",
+    "%m/%d/%Y %H:%M:%OS",
+    "%m-%d-%Y %H:%M:%OS",
+    // "%d.%m.%Y %H:%M:%OS",
+
+    "%Y-%b-%d %H:%M:%OS",
+    "%Y/%b/%d %H:%M:%OS",
+    "%Y%b%d %H%M%OS",
+    "%Y%b%d %H:%M:%OS",
+    "%b/%d/%Y %H:%M:%OS",
+    "%b-%d-%Y %H:%M:%OS",
+
+    "%d.%b.%Y %H:%M:%OS",
+    "%d%b%Y %H%M%OS",
+    "%d%b%Y %H:%M:%OS",
+    "%d-%b-%Y %H%M%OS",
+    "%d-%b-%Y %H:%M:%OS",
+
+    "%Y-%B-%d %H:%M:%OS",
+    "%Y/%B/%d %H:%M:%OS",
+    "%Y%B%d %H%M%OS",
+    "%Y%B%d %H:%M:%OS",
+    "%B/%d/%Y %H:%M:%OS",
+    "%B-%d-%Y %H:%M:%OS",
+    "%d.%B.%Y %H:%M:%OS",
+
+    // see http://stackoverflow.com/questions/39259184/formatting-dates-with-r for next one
+    "%a %b %d %H:%M:%OS %Y",
+
+    // see RFC 822 and standard Unix use eg mail headers (but no TZ or UTC offset on input :-/ )
+    "%a %d %b %Y %H:%M:%OS",
+
+    // See the Boost documentation, tz specifications (%q %Q %z %Z) are _ignored_ on input
+    // http://www.boost.org/doc/libs/1_62_0/doc/html/date_time/date_time_io.html#date_time.time_input_facet
+    "%Y-%m-%d %H:%M:%S%Z",
+
+    // Issue 47: support formats like "Thu Jan 17 09:29:10 EST 2013" by ignoring the three-char TZ
+    // also support fractional seconds if present
+    "%a %b %d %H:%M:%OS xxx %Y",
+
+    "%Y-%m-%d",
+    "%Y%m%d",
+    "%m/%d/%Y",
+    "%m-%d-%Y",
+
+    "%Y-%b-%d",
+    "%Y%b%d",
+    "%b/%d/%Y",
+    "%b-%d-%Y",
+
+    "%d%b%Y"
+    "%d-%b-%Y"
+
+    "%Y-%B-%d",
+    "%Y%B%d",
+    "%B/%d/%Y",
+    "%B-%d-%Y"
+
+};
+const size_t nrformats = sizeof(rformats)/sizeof(rformats[0]);
+
+// conversion of ptime object to double done by ptToDouble()
+double r_stringToTime(const std::string s, const std::string tz,
+                      const bool asUTC=false, const bool asDate=false) {
+
+    bool done = false;
+    double res = NA_REAL;
+    SEXP ss = Rcpp::wrap(s);
+    SEXP tzs = Rcpp::wrap(tz);
+
+    // loop over formats and try them til one fits
+    for (size_t i=0; !done && i < nrformats; ++i) {
+        // asPOSIXct and Rstrptime are both from RApiDatetime
+        res = Rcpp::as<double>( asPOSIXct( Rstrptime(ss, Rcpp::wrap(rformats[i]), tzs) , tzs) );
+        done = ! Rcpp::traits::is_na<REALSXP>(res);
+    }
+    return res;
+}
+
+// ---
+
+
 template <class T, int RTYPE>
 Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
                                   const std::string& tz = "UTC",
                                   const bool asUTC = false,
-                                  const bool asDate = false) {
+                                  const bool asDate = false,
+                                  const bool useR = false) {
 
     // step one: create a results vector, and class it as POSIXct
     int n = sxpvec.size();
@@ -257,7 +350,7 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
         // but with templating to T this is straightforward enough
         T val = sxpvec[i];
         std::string s = boost::lexical_cast<std::string>(val);
-        
+
         if (s == "NA") {
             pv[i] = NA_REAL;
         } else {
@@ -285,15 +378,15 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
                         two = two.substr(0, 2) + ":" + two.substr(2, 2);
                     }
                 }
-                
+
                 s = one + " " + two;
                 if (three != "") {
                     s = s + "." + three;
                 }
-                    
+
                 if (debug) Rcpp::Rcout << "s: " << s << " one: " << one << " two: ";
                 if (debug) Rcpp::Rcout << two << " " << " three: " << three << std::endl;
-               
+
             } else if (isAtLeastGivenLengthAndAllDigits(two, 6)) {
                 if (two.size() == 6) {
                     two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
@@ -302,17 +395,21 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
             } else {
                 if (debug) Rcpp::Rcout << "One: " << one << " " << "two: " << two << std::endl;
             }
-            
+
             if (debug) Rcpp::Rcout << "before parse: " << s << std::endl;
-            
+
             // Given the string, convert to a POSIXct using an interim double
             // of fractional seconds since the epoch
-            pv[i] = stringToTime(s, asUTC, asDate);
+            if (useR) {
+                pv[i] = r_stringToTime(s, tz, asUTC, asDate);
+            } else {
+                pv[i] = stringToTime(s, asUTC, asDate);
+            }
         }
     }
     // There is an issue with datetime parsing under TZ=Europe/London, see eg #36 and #51
     // We think this is caused by Boost but as we return to R for formating we need to adjust
-    if (setupTZ == "Europe/London") {					// #nocov start
+    if (!useR && setupTZ == "Europe/London") {					// #nocov start
         //Rcpp::Rcerr << "Putzing\n";
         const double cutoff = 57722400; // 1971-10-31 02:00:00 was a policy change
         for (int i=0; i<pv.size(); i++) {
@@ -329,32 +426,38 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
 Rcpp::NumericVector anytime_cpp(SEXP x,
                                 const std::string& tz = "UTC",
                                 const bool asUTC = false,
-                                const bool asDate = false) {
+                                const bool asDate = false,
+                                const bool useR = false,
+                                const bool oldHeuristic = false) {
 
     if (Rcpp::is<Rcpp::CharacterVector>(x)) {
         // already a character -- so parse from character and convert
-        return convertToTime<const char*, STRSXP>(x, tz, asUTC, asDate);
-               
-    } else if ((Rcpp::is<Rcpp::NumericVector>(x) && REAL(x)[0]    <= maxIntAsDate) ||
-               (Rcpp::is<Rcpp::IntegerVector>(x) && INTEGER(x)[0] <= maxIntAsDate)    ) {
+        return convertToTime<const char*, STRSXP>(x, tz, asUTC, asDate, useR);
+
+    } else if ((Rcpp::is<Rcpp::NumericVector>(x) &&
+                asDate && REAL(x)[0]    <= maxIntAsDate) ||
+               (Rcpp::is<Rcpp::IntegerVector>(x) &&
+                asDate && INTEGER(x)[0] <= maxIntAsDate)) {
         // if numeric or integer and below date cutoff, treat as (already numeric/int) date
         return Rcpp::DateVector(x);
-        
-    } else if (Rcpp::is<Rcpp::IntegerVector>(x) && INTEGER(x)[0] <= maxIntAsYYYYMMDD) {
-        // actual integer date notation: convert to string via lexical cast
-        // and then parse that string as usual
-        return convertToTime<int, INTSXP>(x, tz, asUTC, asDate);
 
-    } else if (Rcpp::is<Rcpp::NumericVector>(x) && REAL(x)[0] <= maxIntAsYYYYMMDD) {
+    } else if (Rcpp::is<Rcpp::IntegerVector>(x) &&
+               oldHeuristic && INTEGER(x)[0] <= maxIntAsYYYYMMDD) {
         // actual integer date notation: convert to string via lexical cast
         // and then parse that string as usual
-        return convertToTime<double, REALSXP>(x, tz, asUTC, asDate);
+        return convertToTime<int, INTSXP>(x, tz, asUTC, asDate, useR);
+
+    } else if (Rcpp::is<Rcpp::NumericVector>(x) &&
+               oldHeuristic && REAL(x)[0] <= maxIntAsYYYYMMDD) {
+        // actual integer date notation: convert to string via lexical cast
+        // and then parse that string as usual
+        return convertToTime<double, REALSXP>(x, tz, asUTC, asDate, useR);
 
     } else if (Rcpp::is<Rcpp::NumericVector>(x) || Rcpp::is<Rcpp::IntegerVector>(x)) {
         // now we actually should have a proper large numeric (ie as.numeric(Sys.time())
         // so we can simply return as the already created Datetime vector
         return Rcpp::DatetimeVector(x, asUTC ? "UTC" : tz.c_str());
-        
+
     } else {
         Rcpp::stop("Unsupported Type");	// bug in 0.12.{7,8}; Rcpp 0.12.9 or latyer ok
         return R_NilValue;//not reached
@@ -395,12 +498,12 @@ void addFormats(Rcpp::CharacterVector fmt) {
 Rcpp::NumericVector testFormat_impl(const std::string fmt,
                                     const std::string s,
                                     const std::string tz = "") {
-    
+
     bt::ptime pt, ptbase;
 
     std::istringstream is(s);
     std::locale loc = std::locale(std::locale::classic(), new bt::time_input_facet(fmt));
-    
+
     is.imbue(loc);
     is >> pt;
 
@@ -408,7 +511,7 @@ Rcpp::NumericVector testFormat_impl(const std::string fmt,
 
     Rcpp::DatetimeVector pv(1, tz.c_str());
     pv(0) = timeval;
-    
+
     return pv;
 }
 
@@ -444,7 +547,7 @@ std::vector<std::string> format(Rcpp::NumericVector x) {
         z[i] = d.format();
 #else
         z[i] = "";
-#endif        
+#endif
     }
     return z;
 }
@@ -463,3 +566,135 @@ void setMaxIntAsDate(const int val) {
 void setInitialTZ(std::string tz) {
     setupTZ = tz;
 }
+
+
+#if 0
+template <class T, int RTYPE>
+Rcpp::NumericVector r_convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
+                                    const std::string& tz = "UTC",
+                                    const bool asUTC = false,
+                                    const bool asDate = false) {
+
+    // step one: create a results vector, and class it as POSIXct
+    int n = sxpvec.size();
+    Rcpp::DatetimeVector pv(n, tz.c_str());
+    // if (asDate) {
+    //     pv.attr("class") = Rcpp::CharacterVector::create("Date");
+    // } else {
+    //     pv.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
+    // }
+    // pv.attr("tzone") = tz;
+
+    // step two: loop over input, cast each element to string and then convert
+    for (int i=0; i<n; i++) {
+
+        // if we do not explicit assign to int, double or string then clang
+        // flags a UBSAN error (which was the case for release 0.0.1 to 0.0.3)
+        // but with templating to T this is straightforward enough
+        T val = sxpvec[i];
+        std::string s = boost::lexical_cast<std::string>(val);
+        if (s == "NA") {
+            pv[i] = NA_REAL;
+        } else {
+            if (debug) Rcpp::Rcout << "before tests: " << s << std::endl;
+            // Boost Date_Time gets the 'YYYYMMDD' format wrong, even
+            // when given as an explicit argument. So we need to test here.
+            // While we're at it, may as well test for obviously wrong data.
+            std::string one = "", two = "", three = "", inp = s;
+            stringSplitter(inp, " ", one, two);
+            if (isAtLeastGivenLengthAndAllDigits(one, 8)) {
+                one = one.substr(0, 4) + "-" + one.substr(4, 2) + "-" + one.substr(6,2);
+
+                if ((two.size()==5 || two.size() >= 8) &&          	// if we have hh:mm or hh:mm:ss[.ffffff]
+                    !isAtLeastGivenLengthAndAllDigits(two, 6)) { 	// and it is not hhmmss
+                    three = "";    	                     		// do nothing, three remains ""
+                } else {
+                    inp = two;
+
+                    // The 'YYYYMMDD' format can of course be followed by either
+                    // 'HHMMSS' or 'HHMM' or 'HHMMSS.fffffff' so we cover these cases
+                    stringSplitter(inp, ".", two, three);
+                    if (two.size() == 6) {
+                        two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
+                    } else if (two.size() == 4) {
+                        two = two.substr(0, 2) + ":" + two.substr(2, 2);
+                    }
+                }
+
+                s = one + " " + two;
+                if (three != "") {
+                    s = s + "." + three;
+                }
+
+                if (debug) Rcpp::Rcout << "s: " << s << " one: " << one << " two: ";
+                if (debug) Rcpp::Rcout << two << " " << " three: " << three << std::endl;
+
+            } else if (isAtLeastGivenLengthAndAllDigits(two, 6)) {
+                if (two.size() == 6) {
+                    two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
+                }
+                s = one + " " + two;
+            } else {
+                if (debug) Rcpp::Rcout << "One: " << one << " " << "two: " << two << std::endl;
+            }
+
+            if (debug) Rcpp::Rcout << "before parse: " << s << std::endl;
+
+            // Given the string, convert to a POSIXct using an interim double
+            // of fractional seconds since the epoch
+            pv[i] = r_stringToTime(s, tz, asUTC, asDate);
+        }
+    }
+    // There is an issue with datetime parsing under TZ=Europe/London, see eg #36 and #51
+    // We think this is caused by Boost but as we return to R for formating we need to adjust
+    if (setupTZ == "Europe/London") {					// #nocov start
+        //Rcpp::Rcerr << "Putzing\n";
+        const double cutoff = 57722400; // 1971-10-31 02:00:00 was a policy change
+        for (int i=0; i<pv.size(); i++) {
+            pv[i] = pv[i] + 3600 * (pv[i] >= cutoff);
+        }
+    }                                                                   // #nocov end
+    if (asDate) {               // if we wanted Date types, set class
+        pv.attr("class") = Rcpp::CharacterVector::create("Date");
+    }
+    return pv;
+}
+
+
+// [ [ Rcpp::export]]
+Rcpp::NumericVector r_anytime_cpp(SEXP x,
+                                  const std::string& tz = "UTC",
+                                  const bool asUTC = false,
+                                  const bool asDate = false) {
+
+    if (Rcpp::is<Rcpp::CharacterVector>(x)) {
+        // already a character -- so parse from character and convert
+        return r_convertToTime<const char*, STRSXP>(x, tz, asUTC, asDate);
+
+    } else if ((Rcpp::is<Rcpp::NumericVector>(x) && REAL(x)[0]    <= maxIntAsDate) ||
+               (Rcpp::is<Rcpp::IntegerVector>(x) && INTEGER(x)[0] <= maxIntAsDate)    ) {
+        // if numeric or integer and below date cutoff, treat as (already numeric/int) date
+        return Rcpp::DateVector(x);
+
+    } else if (Rcpp::is<Rcpp::IntegerVector>(x) && INTEGER(x)[0] <= maxIntAsYYYYMMDD) {
+        // actual integer date notation: convert to string via lexical cast
+        // and then parse that string as usual
+        return r_convertToTime<int, INTSXP>(x, tz, asUTC, asDate);
+
+    } else if (Rcpp::is<Rcpp::NumericVector>(x) && REAL(x)[0] <= maxIntAsYYYYMMDD) {
+        // actual integer date notation: convert to string via lexical cast
+        // and then parse that string as usual
+        return r_convertToTime<double, REALSXP>(x, tz, asUTC, asDate);
+
+    } else if (Rcpp::is<Rcpp::NumericVector>(x) || Rcpp::is<Rcpp::IntegerVector>(x)) {
+        // now we actually should have a proper large numeric (ie as.numeric(Sys.time())
+        // so we can simply return as the already created Datetime vector
+        return Rcpp::DatetimeVector(x, asUTC ? "UTC" : tz.c_str());
+
+    } else {
+        Rcpp::stop("Unsupported Type");	// bug in 0.12.{7,8}; Rcpp 0.12.9 or latyer ok
+        return R_NilValue;//not reached
+    }
+
+}
+#endif
