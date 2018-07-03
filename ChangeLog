@@ -1,3 +1,44 @@
+2018-07-03  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.1
+
+2017-10-11  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Rolled minor version
+
+	* tests/simpleTests.R: Additional test for yyyymmdd()
+
+2017-10-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/formats.R: Added yyyymmdd() converter even though it
+	represents a truly terrible format
+	* man/iso8601.Rd: Added documentation
+
+2017-10-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/simpleTests.R: Additional test for anydate from integer
+
+2017-10-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Rolled minor version
+
+	* NAMESPACE: Export assertDate and assertTime
+
+	* tests/assertions.R: Added simple tests
+
+2017-10-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* man/assertDate.Rd: Added documentation
+	* tests/assertions.R (assertDate, assertTime): Idem
+
+2017-10-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/assertions.R (assertDate, assertTime): First drafts
+
+2017-06-24  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (anytime_cpp): Clone numeric inputs to preserve
+
 2017-06-05  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.0
