@@ -1,3 +1,59 @@
+2018-11-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.2
+
+	* inst/doc/anytime-introduction.pdf: Include prebuilt
+
+	* .Rbuildignore: Exclude vignettes/ directory
+
+2018-11-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/simpleTests.R: Disable two some tests
+
+	* src/anytime.cpp (ptToDouble): Small Windows refinement for DST
+	adjustment
+
+2018-11-01  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* vignettes/anytime-introduction.Rmd: Updated and extended
+
+2018-09-02  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .travis.yml: Switch Travis CI to R 3.5 repo
+
+2018-08-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/allFormats.R: Do not test on Solaris
+	* tests/bulkTest.R: Idem
+	* tests/simpleTests.R: Idem
+
+	* vignettes/anytime-introduction.Rmd: Vignette setup tweaks
+	* cleanup: Idem
+	* DESCRIPTION: Add VignetteBuilder: fields
+
+2018-08-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (r_stringToTime, anytime_cpp): Two uses each of
+	Rcpp::Shield<> to make rchk happy
+
+2018-08-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/simpleTests.R: Added tests for anydate from POSIXt
+
+	* R/assertions.R: Add '#nocov' tags
+
+2018-08-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* vignettes/anytime-introduction.Rmd: More content
+
+2018-07-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* vignettes/anytime-introduction.Rmd: Initial commit
+	* DESCRIPTION (Suggests): Added 'knitr, rmarkdown, pinp'
+	* .travis.yml (install): Also install r-cran-pinp and its imports
+
 2018-07-03  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.1

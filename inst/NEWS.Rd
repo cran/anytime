@@ -3,7 +3,20 @@
 \newcommand{\ghpr}{\href{https://github.com/eddelbuettel/anytime/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/eddelbuettel/anytime/issues/#1}{##1}}
 
-\section{Changes in anytime version 0.3.1 (2017-06-05)}{
+\section{Changes in anytime version 0.3.2 (2018-11-05)}{
+  \itemize{
+    \item Added a new vignette introducing the \pkg{anytime} package.
+    Seemingly it cannot be compiled on Windows so included prebuilt.
+    \item Some more tests for \code{anydate} were added along with so
+    code coverage tags.
+    \item The C++ code was robustified in two places to not trigger
+    \code{rchk} warnings (\ghpr{79}).
+    \item Three unit test files which fail on Solaris are now skipping
+    this os as we cannot reproduce or test on this OS (\ghpr{80}).
+  }
+}
+
+\section{Changes in anytime version 0.3.1 (2018-07-03)}{
   \itemize{
     \item Numeric input is now preserved rather than silently cast to
     the return object type (\ghpr{69} fixing \ghit{68}).
