@@ -3,15 +3,17 @@
 ## and while Boost Date_Time instantiates the formats relative to a locale
 ## it remains tricky to change TZ on the fly
 
+library(anytime)                        # load it early to test verseion
+
 ## We turn off tests on Solaris with some regret, yet firmly, as the
 ## combined inability of CRAN to provide us a test platform (to
 ## examine test failures) along with the insistence on running these
 ## tests gives us no choice
 isSolaris <- Sys.info()[["sysname"]] == "SunOS"
+isWindows <- Sys.info()[["sysname"]] == "Windows"
+isRelease <- length(unclass(packageVersion("anytime"))[[1]]) == 3
 
-if (!isSolaris) {
-
-    library(anytime)
+if (!isSolaris && !isWindows && !isRelease) {
 
     verbose <- FALSE
 
@@ -607,7 +609,7 @@ if (!isSolaris) {
             ## for as.POSIXct, we give tz when we format
             pt <- format(as.POSIXct(tstr       ), tz=tz)
             if (verbose) cat(at, " -- ", pt, " -- ", tz, "\n")
-            stopifnot(all.equal(at, pt))
+            expect_equal(at, pt)
         }
     }
 
@@ -616,7 +618,7 @@ if (!isSolaris) {
             at <- format(anydate(tstr))
             pt <- format(as.Date(tstr))
             if (verbose) cat(at, " -- ", pt, " -- ", tz, "\n")
-            stopifnot(all.equal(at, pt))
+            expect_equal(at, pt)
         }
     }
 

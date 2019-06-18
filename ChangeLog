@@ -1,3 +1,154 @@
+2019-06-18  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.4
+
+2019-06-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_all_formats.R: Do not run test for releases
+	* inst/tinytest/test_bulk.R: Idem
+        * inst/tinytest/test_gh_issue_5.R: Idem
+        * inst/tinytest/test_validate.R: Idem
+
+2019-06-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* vignettes/anytime-introduction.Rnw: Vignette wrapper with tip of
+	the hat to Mark van der Loo for his January 2019 blog post
+	* vignettes/rmd/anytime-intro.Rmd: Moved
+	* vignettes/rmd/anytime.bib: Idem
+
+	* vignettes/rmd/anytime-intro.Rmd: Updated
+	* vignettes/anytime-intro.pdf: Idem
+
+	* vignettes/anytime-intro.pdf: Ran compactPDF(gs_quality = "ebook")
+
+	* .codecov.yml (coverage): Make patch behaviour more quiet
+
+	* inst/tinytest/test_simple.R: Test old format
+
+2019-06-15  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/formats.R (iso8601): Switch format to ISO8601 use with T between
+	date and time; allow option to override for old behaviour.
+	* man/iso8601.Rd: Document new behaviour and option.
+
+2019-06-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md (tinytest): Mention post-install testing
+
+2019-06-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* src/anytime.cpp (r_stringToTime): Use Sys.setenv() from R on
+	Windows as the latter OS remains "special"
+
+	* inst/tinytest/test_all_formats.R: Exempt Windows from some tests
+	* inst/tinytest/test_bulk.R: ditto
+	* inst/tinytest/test_gh_issue_5.R: ditto
+	* inst/tinytest/test_gh_issue_84.R: ditto
+	* inst/tinytest/test_r_format.R: ditto
+	* inst/tinytest/test_simple.R: ditto
+	* inst/tinytest/test_utilities.R: ditto
+	* inst/tinytest/test_validate.R: ditto
+
+2019-06-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_r_format.R: Renamed for consistency
+	* inst/tinytest/test_gh_issue_33.R: Idem
+	* inst/tinytest/test_gh_issue_12.R: Idem
+	* inst/tinytest/test_utilities.R: Idem
+
+2019-06-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_assertions.R: From tests/assertions.R
+	* inst/tinytest/test_bulk.R: tests/bulkTest.R
+	* inst/tinytest/test_gh_issue_56.R: tests/gh_issue_56.R
+	* inst/tinytest/test_gh_issue_84.R: tests/gh_issue_84.R
+	* inst/tinytest/test_gh_issues_36_51.R: tests/gh_issues_36_51.R
+
+2019-06-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_all_formats.R: From tests/testAllFormats.R
+	* inst/tinytest/test_assertions.R: From tests/testAssertions.R
+	* inst/tinytest/test_bulk.R: From tests/bulkTest.R
+	* inst/tinytest/test_gh_issue_56.R: From tests/gh_issue_56.R
+
+	* inst/tinytest/testSimpleTests.R: Tweaks for Travis
+	* inst/tinytest/testValidate.R: Idem
+	* inst/tinytest/test_gh_issue_5.R: Idem
+
+2019-06-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp: Added removeFormats() (also in TimeFormats)
+	* src/RcppExports.cpp: Updated
+	* R/RcppExports.R: Updated
+	* man/getFornats.Rd: Updated, added removeFormats help
+	* NAMESPACE: Export removeFormats()
+
+	* inst/tinytest/testUtilities.R: Added removeFormats() and format
+	comparison tests
+
+2019-06-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* inst/tinytest/testUtilities.R: Do not add format as it persists
+	across tests -- with thanks to Mark van der Loo for spotting this
+
+	* tests/tinytest.R: Depend on tinytest 0.9.4 (on CRAN "soon")
+
+	* src/anytime.cpp: Explicitly unset TZ variable in Rstrptime
+
+2019-06-02  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_gh_issue_12.R: From tests/test_gh_issue_12.R
+	* inst/tinytest/test_gh_issue_33.R: From tests/test_gh_issue_12.R
+
+2019-05-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* inst/tinytest/test_gh_issue_5.R: From tests/test_gh_issue_5.R
+
+2019-05-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/testSimpleTests.R: Converted from tests/simpleTests.R
+	* inst/tinytest/testR_Format.R: Converted from tests/r_anytime.R
+	* inst/tinytest/testUtilities.R: Converted from tests/utilities.R
+
+2019-05-28  Dirk Eddelbuettel  <edd@debian.org>
+
+        * tests/tinytest.R: New test driver using tinytest
+        * DESCRIPTION (Suggests): Added tinytest
+        * .travis.yml (install): Install tinytest
+
+	* inst/tinytest/testValidate.R: Converted from tests/validate.R
+
+2019-04-02  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* src/Makevars: Added to set C++11 avoiding a compiler warning
+	* src/Makevars.win: Idem
+
+2018-12-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Rolled minor version
+
+	* R/anytime.R: Add note (in roxygen code) about 'Europe/London' issue
+	with pointers to four GH issue tickets and possible alternative.
+	* man/anytime.Rd: Idem
+
+	* src/anytime.cpp: Only if undefined, define BOOST_NO_AUTO_PTR
+
+2018-11-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Rolled minor version
+
+	* tests/gh_issue_84.R: Added for apparent Fedora issue but more
+	likely a TZ=Europe/London issue
+	* .Rbuildignore: Added tests/gh_issue_84.R
+
 2018-11-13  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.3

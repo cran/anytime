@@ -3,6 +3,19 @@
 \newcommand{\ghpr}{\href{https://github.com/eddelbuettel/anytime/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/eddelbuettel/anytime/issues/#1}{##1}}
 
+\section{Changes in anytime version 0.3.4 (2019-06-18)}{
+  \itemize{
+    \item Documentation was updated about a 'Europe/London' conversion
+    issue (\ghit{84}, inter alia).
+    \item The package is now compiled under the C++11 standard.
+    \item The package now uses \pkg{tinytest} for unit tests.
+    \item The \code{iso8601()} function now places a \sQuote{T} between
+    date and time; an option switches to prior format using a space.
+    \item The vignette is now pre-made and included as-is in a Sweave
+    document reducing the number of suggested packages.
+  }
+}
+
 \section{Changes in anytime version 0.3.3 (2018-11-13)}{
   \itemize{
     \item Vignette build quirkyness on Windows resolved so vignette
