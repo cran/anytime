@@ -1,7 +1,7 @@
 
 ## anytime: Use Boost Date_Time to convert date(time) data to POSIXt
 ##
-## Copyright (C) 2015 - 2018  Dirk Eddelbuettel
+## Copyright (C) 2015 - 2019  Dirk Eddelbuettel
 ##
 ## This file is part of anytime.
 ##
@@ -83,6 +83,21 @@
 ##' \code{\link{Sys.timezone}} manual page suggests several
 ##' alternatives to using \sQuote{Europe/London} such as \sQuote{GB}.
 ##'
+##' Yet another known issue arises on Windows due to designs in the
+##' Boost library. While we can set the \code{TZ} library variable,
+##' Boost actually does \emph{not} consult it but rather relies only
+##' on the (Windows) tool \code{tzutil}. This means that default
+##' behaviour should be as expected: dates and/or times are parsed to
+##' the local settings.  But testing different \code{TZ} values (or
+##' more precisely, changes via the (unexported) helper function
+##' \code{setTZ} function as we cache \code{TZ}) will only influence
+##' the behaviour on Unix or Unix-alike operating systems and not on
+##' Windows.  See the discussion at
+##' \href{https://github.com/eddelbuettel/anytime/issues/96}{issue
+##' ticket 96} for more. In short, the recommendation for Windows
+##' user is to also set \code{useR=TRUE} when setting a timezone
+##' argument.
+##'
 ##' @section Operating System Impact:
 ##' On Windows systems, accessing the \code{isdst} flag on dates or times
 ##' before January 1, 1970, can lead to a crash. Therefore, the lookup of this
@@ -120,12 +135,15 @@
 ##' @param asUTC A logical value indicating if parsing should be to UTC; default
 ##' is false implying localtime.
 ##' @param useR A logical value indicating if conversion should be done via code
-##' from R (via package \pkg{RApiDatetime}) or via the Boost routines.
-##' @param oldHeuristic Behave versions up to and including 0.2.2 did and interpret
-##' a numeric or integer value that could be seen as a YYYYMMDD as a date. If
-##' the default value \code{FALSE} is seen, then date offset for used for dates,
-##' and second offsets for datetimes. A default value can also be set via the
-##' \code{anytimeOldHeuristic} option.
+##' from R (via \code{Rcpp::Function}) instead of the default Boost routines. The
+##' default value is the value of the option \code{anytimeUseRConversions} with a
+##' fallback of \code{FALSE} if the option is unset. In other words, this will
+##' be false by default but can be set to true via an option.
+##' @param oldHeuristic A logical value to enable behaviour as in version 0.2.2 or earlier:
+##' interpret a numeric or integer value that could be seen as a YYYYMMDD as a date. If
+##' the default value \code{FALSE} is seen, then numeric values are used as offsets
+##' dates (in \code{anydate} or \code{utcdate}), and as second offsets for datetimes
+##' otherwise. A default value can also be set via the \code{anytimeOldHeuristic} option.
 ##' @return A vector of \code{POSIXct} elements, or, in the case of \code{anydate},
 ##' a vector of \code{Date} objects.
 ##' @seealso \code{\link{anytime-package}}
@@ -156,8 +174,11 @@
 ##' anytime("2001-02-03 04:05:06", tz="America/Los_Angeles")
 ##' ## somewhat equvalent base R functionality
 ##' format(anytime("2001-02-03 04:05:06"), tz="America/Los_Angeles")
-anytime <- function(x, tz=getTZ(), asUTC=FALSE, useR=FALSE,
-                    oldHeuristic=getOption("anytimeOldHeuristic", FALSE)) {
+anytime <- function(x,
+                    tz = getTZ(),
+                    asUTC = FALSE,
+                    useR = getOption("anytimeUseRConversions", FALSE),
+                    oldHeuristic = getOption("anytimeOldHeuristic", FALSE)) {
 
     if (inherits(x, "POSIXt")) {
         return(as.POSIXct(x, tz=tz))
@@ -175,11 +196,13 @@ anytime <- function(x, tz=getTZ(), asUTC=FALSE, useR=FALSE,
         x <- as.character(x)
     }
 
-    anytime_cpp(x, tz=tz, asUTC=asUTC, useR=useR, oldHeuristic=oldHeuristic)
+    anytime_cpp(x, tz=tz, asUTC=asUTC, asDate=FALSE, useR=useR, oldHeuristic=oldHeuristic)
 }
 
 ##' @rdname anytime
-anydate <- function(x, tz=getTZ(), asUTC=FALSE, useR=FALSE) {
+anydate <- function(x, tz=getTZ(), asUTC=FALSE,
+                    useR = getOption("anytimeUseRConversions", FALSE)) {
+
     ## input is Date, pass through
     if (inherits(x, "Date")) return(x)
 
@@ -197,13 +220,19 @@ anydate <- function(x, tz=getTZ(), asUTC=FALSE, useR=FALSE) {
 }
 
 ##' @rdname anytime
-utctime <- function(x, tz=getTZ(), useR=FALSE,
+utctime <- function(x, tz=getTZ(),
+                    useR = getOption("anytimeUseRConversions", FALSE),
                     oldHeuristic=getOption("anytimeOldHeuristic", FALSE)) {
-    anytime(x=x, tz=tz, asUTC=TRUE, useR=useR, oldHeuristic=oldHeuristic)
+    val <- anytime(x=x, tz=tz, asUTC=TRUE, useR=useR, oldHeuristic=oldHeuristic)
+    if (useR) {                         # need to adjust to UTC in this case
+        dt <- as.POSIXlt(base::format(val, tz="UTC")) - as.POSIXlt(base::format(val))
+        val <- val - dt
+    }
+    val
 }
 
 ##' @rdname anytime
-utcdate <- function(x, tz=getTZ(), useR=FALSE) {
+utcdate <- function(x, tz=getTZ(), useR = getOption("anytimeUseRConversions", FALSE)) {
     ## input is Date, pass through
     if (inherits(x, "Date")) return(x)
 

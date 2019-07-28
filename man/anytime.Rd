@@ -7,15 +7,17 @@
 \alias{utcdate}
 \title{Parse POSIXct or Date objects from input data}
 \usage{
-anytime(x, tz = getTZ(), asUTC = FALSE, useR = FALSE,
+anytime(x, tz = getTZ(), asUTC = FALSE,
+  useR = getOption("anytimeUseRConversions", FALSE),
   oldHeuristic = getOption("anytimeOldHeuristic", FALSE))
 
-anydate(x, tz = getTZ(), asUTC = FALSE, useR = FALSE)
+anydate(x, tz = getTZ(), asUTC = FALSE,
+  useR = getOption("anytimeUseRConversions", FALSE))
 
-utctime(x, tz = getTZ(), useR = FALSE,
+utctime(x, tz = getTZ(), useR = getOption("anytimeUseRConversions", FALSE),
   oldHeuristic = getOption("anytimeOldHeuristic", FALSE))
 
-utcdate(x, tz = getTZ(), useR = FALSE)
+utcdate(x, tz = getTZ(), useR = getOption("anytimeUseRConversions", FALSE))
 }
 \arguments{
 \item{x}{A vector of type character, integer or numeric with date(time)
@@ -36,13 +38,16 @@ return value is still a \code{POSIXt} object instead of a character value.}
 is false implying localtime.}
 
 \item{useR}{A logical value indicating if conversion should be done via code
-from R (via package \pkg{RApiDatetime}) or via the Boost routines.}
+from R (via \code{Rcpp::Function}) instead of the default Boost routines. The
+default value is the value of the option \code{anytimeUseRConversions} with a
+fallback of \code{FALSE} if the option is unset. In other words, this will
+be false by default but can be set to true via an option.}
 
-\item{oldHeuristic}{Behave versions up to and including 0.2.2 did and interpret
-a numeric or integer value that could be seen as a YYYYMMDD as a date. If
-the default value \code{FALSE} is seen, then date offset for used for dates,
-and second offsets for datetimes. A default value can also be set via the
-\code{anytimeOldHeuristic} option.}
+\item{oldHeuristic}{A logical value to enable behaviour as in version 0.2.2 or earlier:
+interpret a numeric or integer value that could be seen as a YYYYMMDD as a date. If
+the default value \code{FALSE} is seen, then numeric values are used as offsets
+dates (in \code{anydate} or \code{utcdate}), and as second offsets for datetimes
+otherwise. A default value can also be set via the \code{anytimeOldHeuristic} option.}
 }
 \value{
 A vector of \code{POSIXct} elements, or, in the case of \code{anydate},
@@ -115,6 +120,21 @@ to \sQuote{Europe/London}, see GitHub issue tickets
 pointed out in the comment in that last one, the
 \code{\link{Sys.timezone}} manual page suggests several
 alternatives to using \sQuote{Europe/London} such as \sQuote{GB}.
+
+Yet another known issue arises on Windows due to designs in the
+Boost library. While we can set the \code{TZ} library variable,
+Boost actually does \emph{not} consult it but rather relies only
+on the (Windows) tool \code{tzutil}. This means that default
+behaviour should be as expected: dates and/or times are parsed to
+the local settings.  But testing different \code{TZ} values (or
+more precisely, changes via the (unexported) helper function
+\code{setTZ} function as we cache \code{TZ}) will only influence
+the behaviour on Unix or Unix-alike operating systems and not on
+Windows.  See the discussion at
+\href{https://github.com/eddelbuettel/anytime/issues/96}{issue
+ticket 96} for more. In short, the recommendation for Windows
+user is to also set \code{useR=TRUE} when setting a timezone
+argument.
 }
 
 \section{Operating System Impact}{

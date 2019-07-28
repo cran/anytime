@@ -1,18 +1,16 @@
-tz <- "UTC"
+tz <- "America/Chicago"
 Sys.setenv("TZ"=tz)
-
 library(anytime)
 anytime:::setTZ(tz)
 
 isSolaris <- Sys.info()[["sysname"]] == "SunOS"
 isWindows <- Sys.info()[["sysname"]] == "Windows"
-isRelease <- length(unclass(packageVersion("anytime"))[[1]]) == 3
+isRelease <- length(unclass(utils::packageVersion("anytime"))[[1]]) == 3
 
 ## We turn off tests on Solaris with some regret, yet firmly, as the
 ## combined inability of CRAN to provide us a test platform (to
 ## examine test failures) along with the insistence on running these
 ## tests gives us no choice
-## Ditto for Windoze
 if (!isSolaris && !isWindows && !isRelease) {
 
     options(digits.secs=6, width=70)
@@ -89,4 +87,12 @@ if (!isSolaris && !isWindows && !isRelease) {
 
     #cat("Next call will tickle exception\n")
     expect_error(anytime(TRUE))		# tickles unsupported type -- and exception, hence try()
+
+
+    expect_equivalent(anydate("1970-01-01 00:00:00", useR=TRUE), anydate(0))
+    expect_equal(anytime:::format(anytime("1970-01-01 00:00:00")), "1970-01-01 00:00:00.000000")
+
+    expect_true(inherits(anytime(as.POSIXlt(Sys.time())), "POSIXt"))
+    expect_true(inherits(anytime(Sys.Date()), "POSIXt"))
+    expect_equal(class(utcdate(Sys.Date())), "Date")
 }

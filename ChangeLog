@@ -1,3 +1,133 @@
+2019-07-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* vignettes/rmd/anytime-intro.Rmd: More edits
+	* vignettes/anytime-intro.pdf: Idem
+
+	* inst/tinytest/test_gh_issue_96.R: More polish
+	* inst/tinytest/test_useR.R: Idem
+
+	* local/test_useR.R: Deactivated as it fails at Travis
+	
+2019-07-27  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R (utctime): Account for difference to UTC when useR=TRUE
+	* inst/tinytest/test_useR.R: New test file for useR=TRUE
+
+	* inst/tinytest/test_all_formats.R: Condition a few more tests
+	* inst/tinytest/test_gh_issue_96.R: Lower 'tol' on two tests
+
+	* inst/tinytest/test_all_formats.R: Set TZ at start
+	* inst/tinytest/test_assertions.R: Idem
+	* inst/tinytest/test_bulk.R: Idem
+	* inst/tinytest/test_gh_issue_100.R: Idem
+	* inst/tinytest/test_utilities.R: Idem
+	
+	* vignettes/rmd/anytime-intro.Rmd: Some edits
+
+2019-07-26  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R (utctime, anydate, utcdate): Also use option for
+	possible useR default
+	* R/format.R: Documentation tweaks
+	* man/anytime-package.Rd: Idem
+	* man/iso8601.Rd: Idem
+	* README.md: Idem
+	* vignettes/rmd/anytime-introduction.Rmd: Idem
+
+2019-07-25  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (r_stringToTime): Correct 'useR' to date conversion
+
+2019-07-24  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* inst/tinytest/test_all_formats.R: Tweaks for Windows tests
+	* inst/tinytest/test_bulk.R: Idem
+
+	* .travis.yml (install): Simplified with two fewer required packages
+
+2019-07-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R (anytime): The useR argument can now be set via an option
+	* man/anytime.Rd: Ditto
+
+2019-07-21  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_r_format.R: Deactivate test as it fails on Travis
+
+2019-07-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* src/anytime.cpp (r_stringToTime): Use Rcpp::Function to access R
+	functionality instead of using RApiDatetime
+
+	* DESCRIPTION: No longer import RApiDatetime
+	* NAMESPACE: Idem
+
+        * inst/tinytest/test_all_formats.R: Loosen Windows test restrictions
+	* inst/tinytest/test_gh_issue_96.R: Idem
+
+2019-07-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp: A few minor #nocov additions
+	* inst/tinytest/test_all_formats.R: Add test for anydate with useR
+
+2019-07-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* src/anytime.cpp (r_stringToTime): Skip tz argument, change
+	internal conversion logic and reflect optional asDate argument
+
+	* inst/tinytest/test_r_format.R: Skip for now
+	* inst/tinytest/test_bulk.R (fullPOSIXctEx): Set TZ once
+
+2019-07-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/anytime.R: Add a paragraph warning about possibly issue on
+	Windows due to Boost ignoring TZ (but using the tzutil program)
+
+	* tests/tinytest.R: Call as utils::packageVersions()
+        * inst/tinytest/test_all_formats.R: Idem
+        * inst/tinytest/test_bulk.R: Idem
+        * inst/tinytest/test_gh_issue_5.R: Idem
+        * inst/tinytest/test_utilities.R: Idem
+        * inst/tinytest/test_validate.R: Idem
+
+2019-07-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (ptToDouble): Another debug message
+
+2019-07-05  Dirk Eddelbuettel  <edd@debian.org>
+
+        * .travis.yml (install): Use r-cran-tinytest from PPA
+
+2019-06-27  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+2019-06-26  Christoph Sax  <christoph.sax@gmail.com>
+
+	* src/anytime.cpp: Correct use via Rcpp::Function imported
+	Sys.setenv on Windows
+	* R/anytime.R: Use all argument to anytime_cpp()
+
+	* inst/tinytest/test_gh_issue_56.R: Relax Windows test constraint
+	* inst/tinytest/test_gh_issue_84.R: Idem
+	* inst/tinytest/test_simple.R: Idem
+	* inst/tinytest/test_utilities.R: Idem
+
+2019-06-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* inst/tinytest/test_all_formats.R: Add three tests to complete
+	coverage
+
+	* src/anytime.cpp (convertToTime): Some #nocov attributes
+
 2019-06-18  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.4
