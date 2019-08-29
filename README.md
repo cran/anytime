@@ -1,6 +1,6 @@
-## anytime [![Build Status](https://travis-ci.org/eddelbuettel/anytime.svg)](https://travis-ci.org/eddelbuettel/anytime) [![License](https://eddelbuettel.github.io/badges/GPL2+.svg)](http://www.gnu.org/licenses/gpl-2.0.html) [![CRAN](http://www.r-pkg.org/badges/version/anytime)](https://cran.r-project.org/package=anytime)  [![Dependencies](https://tinyverse.netlify.com/badge/anytime)](https://cran.r-project.org/package=anytime) [![Downloads](http://cranlogs.r-pkg.org/badges/anytime?color=brightgreen)](http://www.r-pkg.org/pkg/anytime) [![Code Coverage](https://codecov.io/gh/eddelbuettel/anytime/graph/badge.svg)](https://codecov.io/gh/eddelbuettel/anytime)
+## anytime: Anything to 'POSIXct' or 'Date' Converter
 
-Anything to 'POSIXct' or 'Date' Converter
+[![Build Status](https://travis-ci.org/eddelbuettel/anytime.svg)](https://travis-ci.org/eddelbuettel/anytime) [![License](https://eddelbuettel.github.io/badges/GPL2+.svg)](http://www.gnu.org/licenses/gpl-2.0.html) [![CRAN](http://www.r-pkg.org/badges/version/anytime)](https://cran.r-project.org/package=anytime)  [![Dependencies](https://tinyverse.netlify.com/badge/anytime)](https://cran.r-project.org/package=anytime) [![Downloads](http://cranlogs.r-pkg.org/badges/anytime?color=brightgreen)](http://www.r-pkg.org/pkg/anytime) [![Code Coverage](https://codecov.io/gh/eddelbuettel/anytime/graph/badge.svg)](https://codecov.io/gh/eddelbuettel/anytime) [![JOSS](https://img.shields.io/badge/JOSS-Not%20Worthy-lightgrey)](https://github.com/openjournals/joss-reviews/issues/1605#issuecomment-517055652)
 
 ### Motivation
 
@@ -33,9 +33,8 @@ behaviour of version older than 0.3.0, set `oldHeuristic=TRUE`, see `help(anytim
 #### From Integer or Numeric or Factor or Ordered
 
 ```r
-library(anytime)
+library(anytime)                      ## also caches TZ in local env
 options(digits.secs=6)                ## for fractional seconds below
-Sys.setenv(TZ=anytime:::getTZ())      ## helper function to try to get TZ
 
 ## integer
 anydate(20160101L + 0:2)              ## older version used anytime for this too
@@ -127,6 +126,15 @@ the `useR` argument for more details.
 
 The package should work as expected.
 
+### Example Uses 
+
+Currently, just over ten different [CRAN](https://cran.r-project.org) packages import this package. Among them are the following research-focused packages:
+ - [AGread](https://cran.r-project.org/package=AGread) by Hibbing _et al_ which reads and transforms ActiGraph physical activity measures;
+ - [E4tools](https://cran.r-project.org/package=E4tools) by Kleiman which reads data from Empatica wearable physiology monitors;
+ - [RDS](https://cran.r-project.org/package=RDS) by Handcock _et al_ which is part of the "RDS Ananlyst" suite for analysing respondent-driven sampling data;
+ - [tsbox](https://cran.r-project.org/package=tsbox) by Sax for format-agnostic time series data representation and conversions;
+ - [tsibble](https://cran.r-project.org/package=tsibble) by Wang _et al_ for temporal data in an explicit data- and model-oriented format.
+
 ### Changes
 
 See the NEWS.Rd file on [CRAN](https://cran.r-project.org/package=anytime/news.html) or
@@ -154,6 +162,19 @@ tinytest::test_package("anytime")
 ```
 
 at any later point.
+
+
+### Contributing
+
+Any problems, bug reports, or features requests for the package can be submitted and
+handled most conveniently as [Github
+issues](https://github.com/eddelbuettel/anytime/issues) in the repository.
+
+Before submitting pull requests, it is frequently preferable to first discuss
+need and scope in such an issue ticket.  See the file
+[Contributing.md](https://github.com/RcppCore/Rcpp/blob/master/Contributing.md) (in the
+[Rcpp](https://github.com/RcppCore/Rcpp) repo) for a brief discussion.
+
 
 ### Author
 

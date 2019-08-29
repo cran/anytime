@@ -41,67 +41,67 @@ static int maxIntAsYYYYMMDD = 29991231; // cutoff values below which we treat in
 static int maxIntAsDate = 199999;       // cutoff values below which we treat ints as Dates
 
 const std::string sformats[] = {
-    "%Y-%m-%d %H:%M:%S%f",
-    "%Y-%m-%d %H%M%S%f",
-    "%Y/%m/%d %H:%M:%S%f",
+    "%Y-%m-%d %H:%M:%S%f",  "%Y-%m-%e %H:%M:%S%f",
+    "%Y-%m-%d %H%M%S%f",    "%Y-%m-%e %H%M%S%f",
+    "%Y/%m/%d %H:%M:%S%f",  "%Y/%m/%e %H:%M:%S%f",
     "%Y%m%d %H%M%S%f",
     "%Y%m%d %H:%M:%S%f",
-    "%m/%d/%Y %H:%M:%S%f",
-    "%m-%d-%Y %H:%M:%S%f",
+    "%m/%d/%Y %H:%M:%S%f",  "%m/%e/%Y %H:%M:%S%f",
+    "%m-%d-%Y %H:%M:%S%f",  "%m-%e-%Y %H:%M:%S%f",
     // "%d.%m.%Y %H:%M:%S%f",
 
-    "%Y-%b-%d %H:%M:%S%f",
-    "%Y/%b/%d %H:%M:%S%f",
-    "%Y%b%d %H%M%S%F",
-    "%Y%b%d %H:%M:%S%F",
-    "%b/%d/%Y %H:%M:%S%f",
-    "%b-%d-%Y %H:%M:%S%f",
+    "%Y-%b-%d %H:%M:%S%f",  "%Y-%b-%e %H:%M:%S%f",
+    "%Y/%b/%d %H:%M:%S%f",  "%Y/%b/%e %H:%M:%S%f",
+    "%Y%b%d %H%M%S%F",      "%Y%b%e %H%M%S%F",
+    "%Y%b%d %H:%M:%S%F",    "%Y%b%e %H:%M:%S%F",
+    "%b/%d/%Y %H:%M:%S%f",  "%b/%e/%Y %H:%M:%S%f",
+    "%b-%d-%Y %H:%M:%S%f",  "%b-%e-%Y %H:%M:%S%f",
 
-    "%d.%b.%Y %H:%M:%S%f",
-    "%d%b%Y %H%M%S%f",
-    "%d%b%Y %H:%M:%S%f",
-    "%d-%b-%Y %H%M%S%f",
-    "%d-%b-%Y %H:%M:%S%f",
+    "%d.%b.%Y %H:%M:%S%f",  "%e.%b.%Y %H:%M:%S%f",
+    "%d%b%Y %H%M%S%f",      "%e%b%Y %H%M%S%f",
+    "%d%b%Y %H:%M:%S%f",    "%e%b%Y %H:%M:%S%f",
+    "%d-%b-%Y %H%M%S%f",    "%e-%b-%Y %H%M%S%f",
+    "%d-%b-%Y %H:%M:%S%f",  "%d-%b-%Y %H:%M:%S%f",
 
-    "%Y-%B-%d %H:%M:%S%f",
-    "%Y/%B/%d %H:%M:%S%f",
-    "%Y%B%d %H%M%S%f",
-    "%Y%B%d %H:%M:%S%f",
-    "%B/%d/%Y %H:%M:%S%f",
-    "%B-%d-%Y %H:%M:%S%f",
-    "%d.%B.%Y %H:%M:%S%f",
+    "%Y-%B-%d %H:%M:%S%f",  "%Y-%B-%e %H:%M:%S%f",
+    "%Y/%B/%d %H:%M:%S%f",  "%Y/%B/%e %H:%M:%S%f",
+    "%Y%B%d %H%M%S%f",      "%Y%B%e %H%M%S%f",
+    "%Y%B%d %H:%M:%S%f",    "%Y%B%e %H:%M:%S%f",
+    "%B/%d/%Y %H:%M:%S%f",  "%B/%e/%Y %H:%M:%S%f",
+    "%B-%d-%Y %H:%M:%S%f",  "%B-%e-%Y %H:%M:%S%f",
+    "%d.%B.%Y %H:%M:%S%f",  "%e.%B.%Y %H:%M:%S%f",
 
     // see http://stackoverflow.com/questions/39259184/formatting-dates-with-r for next one
-    "%a %b %d %H:%M:%S%F %Y",
+    "%a %b %d %H:%M:%S%F %Y", "%a %b %e %H:%M:%S%F %Y",
 
     // see RFC 822 and standard Unix use eg mail headers (but no TZ or UTC offset on input :-/ )
-    "%a %d %b %Y %H:%M:%S%F",
+    "%a %d %b %Y %H:%M:%S%F", "%a %e %b %Y %H:%M:%S%F",
 
     // See the Boost documentation, tz specifications (%q %Q %z %Z) are _ignored_ on input
     // http://www.boost.org/doc/libs/1_62_0/doc/html/date_time/date_time_io.html#date_time.time_input_facet
-    "%Y-%m-%d %H:%M:%S%Z",
+    "%Y-%m-%d %H:%M:%S%Z",  "%Y-%m-%e %H:%M:%S%Z",
 
     // Issue 47: support formats like "Thu Jan 17 09:29:10 EST 2013" by ignoring the three-char TZ
     // also support fractional seconds if present
-    "%a %b %d %H:%M:%S%F xxx %Y",
+    "%a %b %d %H:%M:%S%F xxx %Y",  "%a %b %e %H:%M:%S%F xxx %Y",
 
-    "%Y-%m-%d",
+    "%Y-%m-%d",  "%Y-%m-%e",
     "%Y%m%d",
-    "%m/%d/%Y",
-    "%m-%d-%Y",
+    "%m/%d/%Y",  "%m/%e/%Y",
+    "%m-%d-%Y",  "%m-%e-%Y",
 
-    "%Y-%b-%d",
-    "%Y%b%d",
-    "%b/%d/%Y",
-    "%b-%d-%Y",
+    "%Y-%b-%d",  "%Y-%b-%e",
+    "%Y%b%d",    "%Y%b%e",
+    "%b/%d/%Y",  "%b/%e/%Y",
+    "%b-%d-%Y",  "%b-%e-%Y",
 
-    "%d%b%Y"
-    "%d-%b-%Y"
+    "%d%b%Y",    "%e%b%Y",
+    "%d-%b-%Y",  "%e-%b-%Y",
 
-    "%Y-%B-%d",
-    "%Y%B%d",
-    "%B/%d/%Y",
-    "%B-%d-%Y"
+    "%Y-%B-%d",  "%Y-%B-%e",
+    "%Y%B%d",    "%Y%B%e",
+    "%B/%d/%Y",  "%B/%e/%Y",
+    "%B-%d-%Y",  "%B-%e-%Y"
 
 };
 const size_t nsformats = sizeof(sformats)/sizeof(sformats[0]);
@@ -201,9 +201,9 @@ double ptToDoubleUTC(const bt::ptime & pt, const bool asDate=false) {
         return static_cast<double>(pt.date().day_number()) - static_cast<double>(timet_start.date().day_number());
     }
 
-    bt::time_duration tdiff = pt - timet_start;
+    bt::time_duration tdiff = pt - timet_start;                 // #nocov start
     double totsec = tdiff.total_microseconds()/1.0e6;
-    return totsec;
+    return totsec;                                              // #nocov end
 }
 
 
@@ -230,7 +230,7 @@ double stringToTime(const std::string s, const bool asUTC=false, const bool asDa
                     << " which is UTC " << utc
                     << " local " << loc
                     << " diff " << utc-loc << std::endl;
-    } 				// #nocov end
+    }                           // #nocov end
     if (asUTC) {
         return ptToDoubleUTC(pt, asDate);
     } else {
@@ -381,7 +381,7 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
         std::string s = boost::lexical_cast<std::string>(val);
 
         if (s == "NA") {
-            pv[i] = NA_REAL;    					// #nocov
+            pv[i] = NA_REAL;                                            // #nocov
         } else {
             if (debug) Rcpp::Rcout << "before tests: " << s << std::endl;
             // Boost Date_Time gets the 'YYYYMMDD' format wrong, even
@@ -392,9 +392,9 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
             if (isAtLeastGivenLengthAndAllDigits(one, 8)) {
                 one = one.substr(0, 4) + "-" + one.substr(4, 2) + "-" + one.substr(6,2);
 
-                if ((two.size()==5 || two.size() >= 8) &&          	// if we have hh:mm or hh:mm:ss[.ffffff]
-                    !isAtLeastGivenLengthAndAllDigits(two, 6)) { 	// and it is not hhmmss
-                    three = "";    	                     		// do nothing, three remains "" #nocov
+                if ((two.size()==5 || two.size() >= 8) &&               // if we have hh:mm or hh:mm:ss[.ffffff]
+                    !isAtLeastGivenLengthAndAllDigits(two, 6)) {        // and it is not hhmmss
+                    three = "";                                         // do nothing, three remains "" #nocov
                 } else {
                     inp = two;
 
@@ -417,10 +417,10 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
                 if (debug) Rcpp::Rcout << two << " " << " three: " << three << std::endl;
 
             } else if (isAtLeastGivenLengthAndAllDigits(two, 6)) {
-                if (two.size() == 6) { 					// #nocov start
+                if (two.size() == 6) {                                  // #nocov start
                     two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
                 }
-                s = one + " " + two; 					// #nocov end
+                s = one + " " + two;                                    // #nocov end
             } else {
                 if (debug) Rcpp::Rcout << "One: " << one << " " << "two: " << two << std::endl;
             }
@@ -438,7 +438,7 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
     }
     // There is an issue with datetime parsing under TZ=Europe/London, see eg #36 and #51
     // We think this is caused by Boost but as we return to R for formating we need to adjust
-    if (!useR && setupTZ == "Europe/London") {					// #nocov start
+    if (!useR && setupTZ == "Europe/London") {                                  // #nocov start
         //Rcpp::Rcerr << "Putzing\n";
         const double cutoff = 57722400; // 1971-10-31 02:00:00 was a policy change
         for (int i=0; i<pv.size(); i++) {
@@ -499,7 +499,7 @@ Rcpp::NumericVector anytime_cpp(SEXP x,
         return Rcpp::DatetimeVector(x, asUTC ? "UTC" : tz.c_str());
 
     } else {
-        Rcpp::stop("Unsupported Type");	// bug in 0.12.{7,8}; Rcpp 0.12.9 or later ok #nocov
+        Rcpp::stop("Unsupported Type"); // bug in 0.12.{7,8}; Rcpp 0.12.9 or later ok #nocov
         return R_NilValue;//not reached
     }
 }
@@ -590,7 +590,7 @@ bool setDebug(const bool mode) {
 }
 
 // [[Rcpp::export]]
-std::vector<std::string> format(Rcpp::NumericVector x) {
+std::vector<std::string> fmt(Rcpp::NumericVector x) {
     std::vector<std::string> z(x.size());
     for (int i=0; i<x.size(); i++) {
         Rcpp::Datetime d(x[i]);

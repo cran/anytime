@@ -1,4 +1,100 @@
+2019-08-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.6
+
+2019-08-24  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+	
+	* DESCRIPTION: Suggests on tinytest now '(>= 1.0.0)'
+
+	* tests/tinytests.R: Check for tinytest '(>= 1.0.0)'
+	
+	* inst/tinytest/test_simple.R: Add two more tests
+
+	* vignettes/rmd/anytime-intro.Rmd: Updated
+	* vignettes/anytime-intro.pdf: Idem
+
+2019-08-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp (ptToDoubleUTC): One more #nocov tag
+
+2019-08-18  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_all_formats.R: Small refactoring
+
+2019-08-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: Suggests on tinytest now '(>= 0.9.6.13)'
+	
+	* tests/tinytest.R: Now with parallel execution and side effect
+
+	* inst/tinytest/test_all_formats.R: Now uses tinytest::exit_file()
+        * inst/tinytest/test_bulk.R: Idem
+        * inst/tinytest/test_simple.R: Idem
+	
+2019-08-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Add section on example uses
+
+2019-08-12  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/hide/test_r_format.R: Moved as zero active tests
+	* inst/tinytest/hide/test_gh_issues_36_51.R: Ditto
+	
+2019-08-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/anytime.cpp: Add missing commas in format definition
+
+	* vignettes/rmd/anytime-intro.Rmd: Some more edits
+	* vignettes/anytime-intro.pdf: Idem
+	* vignettes/rmd/anytime.bib: Added entries
+
+2019-08-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/hide/test_gh_issue_5.R: Temporarily moved test
+	which upsets two of the rhub builders
+	* inst/tinytest/hide/test_gh_issue_84.R: Ditto
+        * inst/tinytest/hide/test_gh_issue_96.R: Ditto
+        * inst/tinytest/hide/test_validate.R: Ditto
+ 	
+2019-08-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* src/anytime.cpp: Complement existing sformats[] with '%e' variants
+	to allow single-digit days to be parse by Boost date_time
+
+2019-08-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* R/anytime.R (anytime,anydate,utcdate): Rewritten using S3 dispatch
+	* R/formats.R (iso8601,rfc2822,rfc3339): Ditto
+	* NAMESPACE: Register new S3 methods
+
+	* inst/tinytest/test_all_formats.R: Tweaking tests to accomodate rhub
+	* inst/tinytest/test_bulk.R: Idem
+	* inst/tinytest/test_gh_issue_96.R: Idem
+	* inst/tinytest/test_validate.R: Idem
+	
+2019-07-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* src/anytime.cpp (fmt): Renamed from format() to avoid clashes
+	* src/RcppExports.cpp (_anytime_fmt): Idem
+	* R/RcppExports.R (fmt): Idem
+	* inst/tinytest/test_simple.R: Ditto in test use
+	* inst/tinytest/test_all_formats.R: Idem
+
+2019-07-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_simple.R: A few more simple tests
+
 2019-07-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.5
 
 	* vignettes/rmd/anytime-intro.Rmd: More edits
 	* vignettes/anytime-intro.pdf: Idem
