@@ -1,7 +1,7 @@
 
 ## anytime: Use Boost Date_Time to convert date(time) data to POSIXt
 ##
-## Copyright (C) 2015 - 2019  Dirk Eddelbuettel
+## Copyright (C) 2015 - 2020  Dirk Eddelbuettel
 ##
 ## This file is part of anytime.
 ##
@@ -58,4 +58,19 @@
 
     .pkgenv[["isRStudio"]] <- isRStudio
 
+    ## -- Task three: CRAN tests with the two Fedora machines are
+    ##    (objectively speaking) untameable (we tried at least three rounds)
+    osrel <- "/etc/os-release"
+    if (file.exists(osrel)) { # at least on Ubuntu, Debian, Fedora
+        x <- read.table(osrel, sep="=", row.names=1, col.names=c("","Val"), header = FALSE)
+        .pkgenv[["os"]] <- x["ID", "Val"]
+        .pkgenv[["version"]] <- x["VERSION_ID", "Val"]
+    } else {
+        .pkgenv[["os"]] <- .pkgenv[["version"]] <- ""
+    }
+
 }						#nocov end
+
+.isFedora <- function() .pkgenv[["os"]] == "fedora"
+.isDebian <- function() .pkgenv[["os"]] == "debian"
+.isUbuntu <- function() .pkgenv[["os"]] == "ubuntu"
