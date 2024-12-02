@@ -3,6 +3,24 @@
 \newcommand{\ghpr}{\href{https://github.com/eddelbuettel/anytime/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/eddelbuettel/anytime/issues/#1}{##1}}
 
+\section{Changes in anytime version 0.3.10 (2024-12-02)}{
+  \itemize{
+    \item A new documentation site was added.
+    \item Continuous Integration now uses \code{run.sh} from \pkg{r-ci} with
+    \pkg{bspm}
+    \item Logical input vectors are now recognised as an error (\ghit{121})
+    \item Additional dot-separated format '%Y.%m.%d' is supported
+    \item Other small updates were made throughout the package
+    \item No longer set a C++ compilation standard as the default choices by
+    R are sufficient for the package
+    \item Switch Rcpp include file to Rcpp/Lightest
+    \item We recommend \code{~/.R/Makevars} compiler flag options
+    \code{-Wno-ignored-attributes -Wno-nonnull -Wno-parentheses}
+    \item The \pkg{tinytest} runner was simplified
+    \item \code{NA} values from conversion now trigger a warning
+  }
+}
+
 \section{Changes in anytime version 0.3.9 (2020-08-26)}{
   \itemize{
     \item Skip one test file that is impossible to run across different

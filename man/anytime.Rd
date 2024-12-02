@@ -172,6 +172,16 @@ to \code{TRUE} in startup file. Note that all other inputs such character,
 factor or ordered are not affected.
 }
 
+\section{Warnings}{
+
+As of version 0.3.10, a conversion from character resulting in a \code{NA}
+will lead to a warning being emitted.  At most one warning per call is given:
+should numerous unparseable values be present on input, only one warning will
+be show. R offers mechanism to either suppress warnings, or convert them
+to errors as described in the help page for \code{options()} under the entry
+for \code{warn}.
+}
+
 \examples{
 ## See the source code for a full list of formats, and the
 ## or the reference in help('anytime-package') for details
@@ -202,7 +212,7 @@ This StackOverflow answer provided the initial idea:
 \url{https://stackoverflow.com/a/3787188/143305}.
 }
 \seealso{
-\code{\link{anytime-package}}
+\code{\link{anytime-package}}, \code{\link{getFormats}}
 }
 \author{
 Dirk Eddelbuettel

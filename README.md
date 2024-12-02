@@ -1,13 +1,17 @@
 ## anytime: Anything to 'POSIXct' or 'Date' Converter
 
-[![Build Status](https://travis-ci.org/eddelbuettel/anytime.svg)](https://travis-ci.org/eddelbuettel/anytime)
+[![CI](https://github.com/eddelbuettel/anytime/workflows/ci/badge.svg)](https://github.com/eddelbuettel/anytime/actions?query=workflow%3Aci)
 [![License](https://eddelbuettel.github.io/badges/GPL2+.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](https://www.r-pkg.org/badges/version/anytime)](https://cran.r-project.org/package=anytime)
-[![Dependencies](https://tinyverse.netlify.com/badge/anytime)](https://cran.r-project.org/package=anytime)
+[![r-universe](https://eddelbuettel.r-universe.dev/badges/anytime)](https://eddelbuettel.r-universe.dev/anytime)
+[![Dependencies](https://tinyverse.netlify.app/badge/anytime)](https://cran.r-project.org/package=anytime)
 [![CRAN use](https://jangorecki.gitlab.io/rdeps/anytime/CRAN_usage.svg?sanitize=true)](https://cran.r-project.org/package=anytime)
-[![Downloads](https://cranlogs.r-pkg.org/badges/anytime?color=brightgreen)](https://www.r-pkg.org/pkg/anytime)
-[![Code Coverage](https://codecov.io/gh/eddelbuettel/anytime/graph/badge.svg)](https://codecov.io/gh/eddelbuettel/anytime)
+[![Downloads (monthly)](https://cranlogs.r-pkg.org/badges/anytime?color=brightgreen)](https://www.r-pkg.org/pkg/anytime)
+[![Downloads (total)](https://cranlogs.r-pkg.org/badges/grand-total/anytime?color=brightgreen)](https://www.r-pkg.org/pkg/anytime)
+[![Code Coverage](https://codecov.io/gh/eddelbuettel/anytime/graph/badge.svg)](https://app.codecov.io/gh/eddelbuettel/anytime)
 [![Last Commit](https://img.shields.io/github/last-commit/eddelbuettel/anytime)](https://github.com/eddelbuettel/anytime)
+[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.anytime-blue)](https://doi.org/10.32614/CRAN.package.anytime)
+[![Documentation](https://img.shields.io/badge/documentation-is_here-blue)](https://eddelbuettel.github.io/anytime/)
 [![JOSS](https://img.shields.io/badge/JOSS-Not%20Worthy-lightgrey)](https://github.com/openjournals/joss-reviews/issues/1605#issuecomment-517055652)
 
 ### Motivation
@@ -29,6 +33,11 @@ function do this?
 object no matter the input (provided it was somewhat parseable), relying on
 [Boost date_time](https://www.boost.org/doc/libs/1_61_0/doc/html/date_time.html) for the (efficient,
 performant) conversion. `anydate()` is an additional wrapper returning a `Date` object instead.
+
+### Documentation
+
+Package documentation, help pages, a vignette, and more is available
+[here](https://eddelbuettel.github.io/anytime/).
 
 ### Examples
 
@@ -136,11 +145,19 @@ The package should work as expected.
 
 ### Example Uses
 
-Currently, just over ten different [CRAN](https://cran.r-project.org) packages import this package. Among them are the following research-focused packages:
+Several different [CRAN](https://cran.r-project.org)
+packages import this package. Among them are the following research-focused
+packages:
+
+ - [adheRenceRX](https://cran.r-project.org/package=adheRenceRX) by Beal assesses medication adherence;
  - [AGread](https://cran.r-project.org/package=AGread) by Hibbing _et al_ which reads and transforms ActiGraph physical activity measures;
  - [cqcr](https://cran.r-project.org/package=AGread) by Odell accesses 'Care Quality Commission' data from the health and adult social care regulator for England;
+ - [datadogr](https://cran.r-project.org/package=datadogr) by Yutani queries metrics from Datadog;
  - [E4tools](https://cran.r-project.org/package=E4tools) by Kleiman which reads data from Empatica wearable physiology monitors;
+ - [nprcgenekeepr](https://cran.r-project.org/package=nprcgenekeepr) by Raboin _et al_ provides genetic tools for colony management ;
  - [RDS](https://cran.r-project.org/package=RDS) by Handcock _et al_ which is part of the "RDS Ananlyst" suite for analysing respondent-driven sampling data;
+ - [rtsdata](https://cran.r-project.org/package=rtsdata) by RTSVizTeam manages time series data dtorage;
+ - [threesixtygiving](https://cran.r-project.org/package=threesixtygiving) by Odell accesses download charitable grants from the '360Giving' Platform;
  - [tsbox](https://cran.r-project.org/package=tsbox) by Sax for format-agnostic time series data representation and conversions;
  - [tsibble](https://cran.r-project.org/package=tsibble) by Wang _et al_ for temporal data in an explicit data- and model-oriented format.
 

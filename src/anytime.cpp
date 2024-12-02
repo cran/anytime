@@ -1,8 +1,7 @@
-// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-//
+
 // anytime: Use Boost Date_Time to convert date(time) data to POSIXt
 //
-// Copyright (C) 2015 - 2019  Dirk Eddelbuettel
+// Copyright (C) 2015 - 2023  Dirk Eddelbuettel
 //
 // This file is part of anytime.
 //
@@ -30,8 +29,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#define STRICT_R_HEADERS
-#include <Rcpp.h>
+#include <Rcpp/Lightest>
 
 namespace bt = boost::posix_time;
 namespace ba = boost::algorithm;
@@ -49,6 +47,8 @@ const std::string sformats[] = {
     "%m/%d/%Y %H:%M:%S%f",  "%m/%e/%Y %H:%M:%S%f",
     "%m-%d-%Y %H:%M:%S%f",  "%m-%e-%Y %H:%M:%S%f",
     // "%d.%m.%Y %H:%M:%S%f",
+    "%Y.%m.%d %H:%M:%S%f",  "%Y.%m.%e %H:%M:%S%f",
+    "%Y.%m.%d %H%M%S%f",    "%Y.%m.%e %H%M%S%f",
 
     "%Y-%b-%d %H:%M:%S%f",  "%Y-%b-%e %H:%M:%S%f",
     "%Y/%b/%d %H:%M:%S%f",  "%Y/%b/%e %H:%M:%S%f",
@@ -87,6 +87,7 @@ const std::string sformats[] = {
 
     "%Y-%m-%d",  "%Y-%m-%e",
     "%Y%m%d",
+    "%Y.%m.%d",  "%Y.%m.%e",
     "%m/%d/%Y",  "%m/%e/%Y",
     "%m-%d-%Y",  "%m-%e-%Y",
 
@@ -361,15 +362,10 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
                                   const bool asDate = false,
                                   const bool useR = false) {
 
+    bool have_warned = false;
     // step one: create a results vector, and class it as POSIXct
     int n = sxpvec.size();
     Rcpp::DatetimeVector pv(n, tz.c_str());
-    // if (asDate) {
-    //     pv.attr("class") = Rcpp::CharacterVector::create("Date");
-    // } else {
-    //     pv.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
-    // }
-    // pv.attr("tzone") = tz;
 
     // step two: loop over input, cast each element to string and then convert
     for (int i=0; i<n; i++) {
@@ -382,6 +378,7 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
 
         if (s == "NA") {
             pv[i] = NA_REAL;                                            // #nocov
+            Rcpp::warning("Input conversion resulted in 'NA' results.");
         } else {
             if (debug) Rcpp::Rcout << "before tests: " << s << std::endl;
             // Boost Date_Time gets the 'YYYYMMDD' format wrong, even
@@ -417,12 +414,12 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
                 if (debug) Rcpp::Rcout << two << " " << " three: " << three << std::endl;
 
             } else if (isAtLeastGivenLengthAndAllDigits(two, 6)) {
-                if (two.size() == 6) {                                  // #nocov start
+                if (two.size() == 6) {                                  						// #nocov start
                     two = two.substr(0, 2) + ":" + two.substr(2, 2) + ":" + two.substr(4,2);
                 }
-                s = one + " " + two;                                    // #nocov end
+                s = one + " " + two;
             } else {
-                if (debug) Rcpp::Rcout << "One: " << one << " " << "two: " << two << std::endl;
+                if (debug) Rcpp::Rcout << "One: " << one << " " << "two: " << two << std::endl; // #nocov end
             }
 
             if (debug) Rcpp::Rcout << "before parse: " << s << std::endl;
@@ -434,6 +431,11 @@ Rcpp::NumericVector convertToTime(const Rcpp::Vector<RTYPE>& sxpvec,
             } else {
                 pv[i] = stringToTime(s, asUTC, asDate);
             }
+            if (R_IsNA(pv[i]) && !have_warned) {
+                Rcpp::warning(tfm::format("Input conversion of '%s' resulted in 'NA' results.", s));
+                have_warned = true;
+            }
+
         }
     }
     // There is an issue with datetime parsing under TZ=Europe/London, see eg #36 and #51
@@ -497,6 +499,11 @@ Rcpp::NumericVector anytime_cpp(SEXP x,
         // so we can simply return as the already created Datetime vector
         // no clone needed as integers get cast
         return Rcpp::DatetimeVector(x, asUTC ? "UTC" : tz.c_str());
+
+    } else if (Rcpp::is<Rcpp::LogicalVector>(x)) {
+        // this we cannot do
+        Rcpp::stop("Unsupported type logical vector: no conversion to datetime or date");
+        return R_NilValue;//not reached
 
     } else {
         Rcpp::stop("Unsupported Type"); // bug in 0.12.{7,8}; Rcpp 0.12.9 or later ok #nocov
