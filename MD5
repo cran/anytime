@@ -1,5 +1,5 @@
-1bb20ded42a265450b58d72b9a123ad6 *ChangeLog
-b5f67bede5399b7503c68748b92aefc2 *DESCRIPTION
+365e786a39fc7a1028e80515ac8d68e7 *ChangeLog
+a9f2381a218d2a0c4abc59830ee941f8 *DESCRIPTION
 c26c039a4539c36a0459ffdc3e5e813c *NAMESPACE
 d6929cbb5045e10a56558cb5f03d2b5a *R/RcppExports.R
 469e4d78ab75a13ed5e74ae3097ea80b *R/anytime.R
@@ -8,12 +8,12 @@ e6dea5215ea28124357bf86100b3afe3 *R/formats.R
 c54a419ae1a774d6f65135c5cebaa751 *R/init.R
 abf6a3c6ca30e88e6310aea22c279b90 *R/utils.R
 c4c1ebdbe7bc1e832652e1937a3f4291 *README.md
-4709e5bf298b66cd24440f706c4c83d5 *build/partial.rdb
+d1e82766bf416c2d2d619b77b4883835 *build/partial.rdb
 ad2788a6323866dd8489f2866c152c65 *build/vignette.rds
 e46885e4cad81be57609ba4a80257944 *cleanup
-d5d45d2807086475f466df9d1af13475 *inst/NEWS.Rd
+946b92d5a3d7d77e622f1c6932bed669 *inst/NEWS.Rd
 a172b72811a8a0d6e977b397db81bbd2 *inst/doc/anytime-introduction.Rnw
-3d42b0a853489e9d41e2e026ca9b14a1 *inst/doc/anytime-introduction.pdf
+7beca8c829af236ddcb575906a332afd *inst/doc/anytime-introduction.pdf
 65d15c6735920e77b4e8c513c24710a0 *inst/tinytest/hide/test_gh_issue_5.R
 e24cfd03676edd44ba668a66368e8608 *inst/tinytest/hide/test_gh_issue_84.R
 4a2bf4d5bd840b560a9ccad3500681e8 *inst/tinytest/hide/test_gh_issue_96.R
@@ -29,7 +29,6 @@ a8e2f3106b4a412cc02f6e05348f44f8 *inst/tinytest/test_gh_issue_100.R
 fbb4f5970288f04ba45bac1baa9ba857 *inst/tinytest/test_gh_issue_129.R
 3314db04a494d8fcb3c13673ba8b6d7e *inst/tinytest/test_gh_issue_33.R
 99b93a2baa53f01ab5ae7e4383f7026c *inst/tinytest/test_gh_issue_56.R
-1416f6144b77d04868788341b6398a3a *inst/tinytest/test_simple.R
 94548d26ec19756c2dc2f54aa5a4c869 *inst/tinytest/test_utilities.R
 fcf80694e8c14e873c29590e4c25e711 *man/anytime-package.Rd
 aae05eac7f788497bbc4103ad85ce173 *man/anytime.Rd
